@@ -5,7 +5,7 @@
   "license": "MIT",
   "author": "Jon Staab",
   "scripts": {
-    "start": "webpack-dev-server --hot --inline --content-base src/",
+    "start": "webpack-dev-server --hot --inline --port 9999 --content-base src/",
     "build": "rimraf dist && webpack",
     "watch": "webpack --watch"
   },
