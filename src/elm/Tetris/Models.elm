@@ -1,32 +1,43 @@
-module Tetris.Models exposing (BlockId, Block, Shape, Tetris, newShape, newBlock)
+module Tetris.Models exposing (..)
 
-import Matrix exposing (Location)
+import Matrix exposing (Location, Matrix, matrix)
 
 type alias BlockId = Int
 
+type BlockType
+  = EmptyBlock
+  | FullBlock
+  | SelectedBlock
+
 type alias Block =
   { id : BlockId
-  , location : Location
-  , selected : Bool
+  , blockType : BlockType
+  , letter : Char
   }
 
 type alias Shape =
-  { id : ShapeId
-  , blockIds : (List BlockId)
+  { blockIds : (List BlockId)
   }
 
 type alias Tetris =
-  { blocks : List Block
-  , shape : Shape
+  { blocks : Matrix Block
+  , shape : Maybe Shape
   }
 
-newShape : Shape
+newShape : List BlockId -> Shape
 newShape blockIds =
   { blockIds = blockIds
   }
 
-newBlock : Block
-newBlock id location =
+newBlock : BlockId -> Char -> Block
+newBlock id letter =
   { id = id
-  , location = location
+  , blockType = EmptyBlock
+  , letter = letter
+  }
+
+initialModel : Tetris
+initialModel =
+  { blocks = matrix 20 15 (\location -> (newBlock 1 'A'))
+  , shape = Nothing
   }
