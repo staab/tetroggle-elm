@@ -3,21 +3,28 @@ import Html.Attributes exposing (..)
 import Html.App as Html
 --import Html.Events exposing ( onClick )
 
--- component import example
+import Random.Pcg exposing (initialSeed, Seed)
 import Tetris.Models exposing (Tetris)
 import Tetris.Messages
 import Tetris.Views exposing (tetris)
 
+type alias Flags =
+  { seed : Int }
+
 type alias Model =
-  { tetris : Tetris }
+  { tetris : Tetris
+  , seed : Seed }
 
 type Msg
   = NoOp
   | TetrisMsg Tetris.Messages.Msg
 
-init : (Model, Cmd Msg)
-init =
-  ({ tetris = Tetris.Models.initialModel}, Cmd.none)
+init : Flags -> (Model, Cmd Msg)
+init flags =
+  ( { tetris = Tetris.Models.initialModel
+    , seed = ( initialSeed flags.seed )
+    }
+  , Cmd.none)
 
 view : Model -> Html Msg
 view model =
@@ -43,9 +50,9 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.none
 
-main : Program Never
+main : Program Flags
 main =
-  Html.program
+  Html.programWithFlags
     { init = init
     , view = view
     , update = update
