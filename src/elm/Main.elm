@@ -21,10 +21,13 @@ type Msg
 
 init : Flags -> (Model, Cmd Msg)
 init flags =
-  ( { tetris = Tetris.Models.initialModel
-    , seed = ( initialSeed flags.seed )
-    }
-  , Cmd.none)
+  let
+    seed = initialSeed flags.seed
+  in
+    ( { tetris = Tetris.Models.init seed
+      , seed = seed
+      }
+    , Cmd.none)
 
 view : Model -> Html Msg
 view model =

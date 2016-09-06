@@ -1,6 +1,10 @@
 module Tetris.Models exposing (..)
 
+import Maybe
 import Matrix exposing (Location, Matrix, matrix)
+import Random.Pcg exposing (Seed, step)
+import Utils exposing (fromJust)
+import Boggle.Utils exposing (randomLetter)
 
 type alias BlockId = Int
 
@@ -12,7 +16,7 @@ type BlockType
 type alias Block =
   { id : BlockId
   , blockType : BlockType
-  , letter : Char
+  , letter : String
   }
 
 type alias Shape =
@@ -29,15 +33,22 @@ newShape blockIds =
   { blockIds = blockIds
   }
 
-newBlock : BlockId -> Char -> Block
+newBlock : BlockId -> String -> Block
 newBlock id letter =
   { id = id
   , blockType = EmptyBlock
   , letter = letter
   }
 
-initialModel : Tetris
-initialModel =
-  { blocks = matrix 20 15 (\location -> (newBlock 1 'A'))
+randomBlock : Seed -> Block
+randomBlock seed =
+  let
+    (letter, seed) = ( step randomLetter seed )
+  in
+    newBlock 1 (fromJust letter)
+
+init : Seed -> Tetris
+init seed =
+  { blocks = matrix 20 15 (\location -> randomBlock seed )
   , shape = Nothing
   }

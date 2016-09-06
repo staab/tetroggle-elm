@@ -3,7 +3,6 @@ module Tetris.Views exposing (tetris)
 import Html exposing (Html, Attribute, div, text, span)
 import Html.Attributes exposing (style, class)
 import Matrix exposing (mapWithLocation, flatten, Location, row, col, colCount)
-import String exposing (fromChar)
 import Tetris.Models exposing (Tetris)
 
 blockPx : Int -> String
@@ -20,7 +19,7 @@ tetris model =
       ( mapWithLocation
         (\location element ->
           span [ class "block" ]
-              [ ( text (fromChar element.letter) ) ]
+              [ ( text element.letter ) ]
         )
         model.blocks
       )

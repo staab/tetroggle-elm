@@ -1,13 +1,17 @@
-module Boggle.Utils exposing (chars)
+module Boggle.Utils exposing (randomLetter)
 
-import Boggle.Models exposing Letter
+import Array
+import Random.Pcg exposing (int, map, Generator)
 
-chars : List Letter
-chars = [
-  "a", "a", "a", "a", "a", "a", "b", "b", "c", "c", "d", "d", "d", "e", "e",
-  "e", "e", "e", "e", "e", "e", "e", "e", "e", "f", "f", "g", "g", "h", "h",
-  "h", "h", "h", "i", "i", "i", "i", "i", "i", "j", "k", "l", "l", "l", "l",
-  "m", "m", "n", "n", "n", "n", "n", "n", "o", "o", "o", "o", "o", "o", "o",
-  "p", "p", "qu", "r", "r", "r", "r", "r", "s", "s", "s", "s", "s", "s", "t",
-  "t", "t", "t", "t", "t", "t", "t", "t", "u", "u", "u", "v", "v", "w", "w",
-  "w", "x", "y", "y", "y", "z"]
+chars : Array.Array String
+chars = Array.fromList [
+  "A", "A", "A", "A", "A", "A", "B", "B", "C", "C", "D", "D", "D", "E", "E",
+  "E", "E", "E", "E", "E", "E", "E", "E", "E", "F", "F", "G", "G", "H", "H",
+  "H", "H", "H", "I", "I", "I", "I", "I", "I", "J", "K", "L", "L", "L", "L",
+  "M", "M", "N", "N", "N", "N", "N", "N", "O", "O", "O", "O", "O", "O", "O",
+  "P", "P", "QU", "R", "R", "R", "R", "R", "S", "S", "S", "S", "S", "S", "T",
+  "T", "T", "T", "T", "T", "T", "T", "T", "U", "U", "U", "V", "V", "W", "W",
+  "W", "X", "Y", "Y", "Y", "Z"]
+
+randomLetter : Generator (Maybe String)
+randomLetter = map (\n -> Array.get n chars) ( int 0 ( Array.length chars ) )
