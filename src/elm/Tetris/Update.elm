@@ -1,25 +1,18 @@
-module Tetris.Update exposing (update)
+module Tetris.Update exposing (update, tick)
 
+import Time
 import Tetris.Messages exposing (Msg(..))
-import Tetris.Models exposing (BlockId, Block, ShapeId, Shape, Tetris, newShape, newBlock)
+import Tetris.Models exposing (Model, newShape)
 
-update : Msg -> Tetris -> ( Tetris, Cmd Msg )
-update message tetris =
+update : Msg -> Model -> ( Model, Cmd Msg )
+update message model =
   case message of
-    CreateShape matrix ->
-      ( tetris | shape = createShape matrix tetris, Cmd.none )
+    Tick ->
+      ( model, Cmd.none )
 
-    RotateShape matrix ->
-      ( tetris | shape = rotateShape tetris.shape matrix, Cmd.none )
+    AddShape ->
+      ( { model | shape = newShape [] }, Cmd.none )
 
-    TranslateShape matrix ->
-      ( tetris | shape = translateShape tetris.shape matrix, Cmd.none )
-
-    SelectBlock blockId ->
-      ( tetris | blocks = selectBlock tetris.blocks blockId, Cmd.none )
-
-    UnselectBlock blockId ->
-      ( tetris | blocks = unselectBlock tetris.blocks blockId, Cmd.none )
-
-    TranslateBlock block matrix ->
-      ( tetris | blocks = translateBlock tetris.blocks blockId, Cmd.none )
+tick : Model -> Time.Time -> ( Model, Cmd Msg )
+tick model time =
+  ( model, Cmd.none )

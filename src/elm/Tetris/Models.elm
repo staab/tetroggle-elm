@@ -16,7 +16,7 @@ type alias Block =
   }
 
 type alias Shape =
-  { locations : (List Location)
+  { locations : List Location
   }
 
 type alias Model =
@@ -24,10 +24,9 @@ type alias Model =
   , shape : Maybe Shape
   }
 
-newShape : List Location -> Shape
+newShape : List Location -> Maybe Shape
 newShape locations =
-  { locations = locations
-  }
+  Just { locations = locations }
 
 randomBlock : Seed -> Block
 randomBlock seed =
