@@ -4,30 +4,33 @@ import Html.App as Html
 --import Html.Events exposing ( onClick )
 
 import Random.Pcg exposing (initialSeed, Seed)
-import Tetris.Models exposing (Tetris)
+import Tetris.Models
 import Tetris.Messages
-import Tetris.Views exposing (tetris)
+import Tetris.Views
 
 type alias Flags =
   { seed : Int }
 
 type alias Model =
-  { tetris : Tetris
+  { tetris : Tetris.Models.Model
   , seed : Seed }
 
 type Msg
   = NoOp
   | TetrisMsg Tetris.Messages.Msg
 
+initialModel : Seed -> Model
+initialModel seed =
+  { tetris = Tetris.Models.initialModel
+  , seed = seed
+  }
+
 init : Flags -> (Model, Cmd Msg)
 init flags =
   let
     seed = initialSeed flags.seed
   in
-    ( { tetris = Tetris.Models.init seed
-      , seed = seed
-      }
-    , Cmd.none)
+    ( initialModel seed, Cmd.none)
 
 view : Model -> Html Msg
 view model =
@@ -35,7 +38,7 @@ view model =
       [ div [ class "row" ]
             [ div [ class "col-xs-12" ]
                   [ div [ class "jumbotron" ]
-                        [ tetris model.tetris
+                        [ Tetris.Views.view model.tetris
                         , p [] [ text "This is tetriiiis!" ]
                         ]
                   ]
