@@ -3,27 +3,10 @@ import Html.Attributes exposing (..)
 import Html.App as Html
 --import Html.Events exposing ( onClick )
 
-import Random.Pcg exposing (initialSeed, Seed)
-import Tetris.Models
-import Tetris.Messages
+import Random.Pcg exposing (initialSeed)
 import Tetris.Views
-
-type alias Flags =
-  { seed : Int }
-
-type alias Model =
-  { tetris : Tetris.Models.Model
-  , seed : Seed }
-
-type Msg
-  = NoOp
-  | TetrisMsg Tetris.Messages.Msg
-
-initialModel : Seed -> Model
-initialModel seed =
-  { tetris = Tetris.Models.initialModel
-  , seed = seed
-  }
+import Model exposing (Flags, Model, initialModel)
+import Messages exposing (Msg(..))
 
 init : Flags -> (Model, Cmd Msg)
 init flags =
