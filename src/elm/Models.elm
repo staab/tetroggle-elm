@@ -1,4 +1,4 @@
-module Model exposing (..)
+module Models exposing (..)
 
 import Random.Pcg exposing (Seed)
 import Tetris.Models
