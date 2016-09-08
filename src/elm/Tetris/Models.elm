@@ -2,13 +2,18 @@ module Tetris.Models exposing (..)
 
 import Maybe
 import Matrix exposing (Location, Matrix, matrix)
-import Random.Pcg exposing (Seed, step)
-import Boggle.Utils exposing (randomLetter)
 
 type BlockType
   = EmptyBlock
   | FullBlock
   | SelectedBlock
+
+type ShapeType
+  = SquareShape
+  | PipeShape
+  | PyramidShape
+  | LongShape
+  | SnakeShape
 
 type alias Block =
   { blockType : BlockType
@@ -16,7 +21,7 @@ type alias Block =
   }
 
 type alias Shape =
-  { locations : List Location
+  { shapeType : ShapeType
   }
 
 type alias Model =
@@ -24,19 +29,12 @@ type alias Model =
   , shape : Maybe Shape
   }
 
-newShape : List Location -> Maybe Shape
-newShape locations =
-  Just { locations = locations }
-
-randomBlock : Seed -> Block
-randomBlock seed =
-  let
-    (letter, seed) = ( step randomLetter seed )
-  in
-    { blockType = FullBlock, letter = letter }
-
 initialModel : Model
 initialModel =
   { blocks = matrix 20 15 (\location -> { blockType = EmptyBlock, letter = Nothing} )
   , shape = Nothing
   }
+
+newShape : ShapeType -> Maybe Shape
+newShape shapeType =
+  Just { shapeType = shapeType }

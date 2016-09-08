@@ -1,16 +1,14 @@
 module Tetris.Update exposing (update, tick)
 
 import Time
-import Random.Pcg exposing (Seed)
-import Matrix exposing (loc)
+import Random.Pcg exposing (Seed, step)
 import Tetris.Messages exposing (Msg(..))
-import Tetris.Models exposing (Model, Shape, newShape)
+import Tetris.Models exposing (Model, Block, BlockType(..), newShape)
+import Tetris.Utils exposing (randomShapeType)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
-  case message of
-    AddShape ->
-      ( { model | shape = newShape [] }, Cmd.none )
+  ( model, Cmd.none )
 
 tick : Model -> Time.Time -> Seed -> ( Model, Cmd Msg )
 tick model time seed =
@@ -23,4 +21,9 @@ tick model time seed =
 
 addShape : Seed -> Model -> Model
 addShape seed model =
-  { model | shape = newShape [ loc 0 0, loc 0 1 ] }
+  let
+    ( shapeType, seed ) = randomShapeType seed
+  in
+    { model |
+      shape = newShape shapeType
+    }
