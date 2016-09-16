@@ -1,11 +1,11 @@
 import Html.App as Html
 
-import Time exposing (every, second)
 import Random.Pcg exposing (initialSeed)
 import Models exposing (Flags, Model, initialModel)
 import Messages exposing (Msg(..))
 import Views exposing (view)
 import Tetris.Update
+import Tetris.Subscriptions
 
 init : Flags -> (Model, Cmd Msg)
 init flags =
@@ -19,21 +19,15 @@ update msg model =
   case msg of
     NoOp -> ( model, Cmd.none )
 
-    Tick time ->
-      let
-        ( updatedTetris, cmd ) = Tetris.Update.tick model.tetris time model.seed
-      in
-        ( { model | tetris = updatedTetris }, Cmd.map TetrisMsg cmd )
-
     TetrisMsg subMsg ->
       let
-        ( updatedTetris, cmd ) = Tetris.Update.update subMsg model.tetris
+        ( updatedTetris, cmd ) = Tetris.Update.update subMsg model.tetris model.seed
       in
         ( { model | tetris = updatedTetris }, Cmd.map TetrisMsg cmd )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  every second Tick
+  Sub.batch [ Tetris.Subscriptions.subscriptions model.tetris |> Sub.map TetrisMsg ]
 
 main : Program Flags
 main =

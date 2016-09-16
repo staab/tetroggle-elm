@@ -1,4 +1,7 @@
 module Tetris.Messages exposing (Msg(..))
 
+import Time exposing (Time)
+
 type Msg
-  = AddShape
+  = Tick Time
+  | AddShape

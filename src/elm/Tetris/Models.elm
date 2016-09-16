@@ -27,13 +27,13 @@ type alias Shape =
   }
 
 type alias Model =
-  { blocks : List Block
+  { blocks : Matrix Block
   , shape : Maybe Shape
   }
 
 initialModel : Model
 initialModel =
-  { blocks = flatten ( matrix 20 15 (\location -> newBlock EmptyBlock Nothing location ) )
+  { blocks = matrix 20 15 (\location -> newBlock EmptyBlock Nothing location )
   , shape = Nothing
   }
 
