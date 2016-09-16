@@ -1,7 +1,8 @@
 module Boggle.Utils exposing (randomLetter)
 
 import Array
-import Random.Pcg exposing (int, map, Generator)
+import Utils exposing (fromJust)
+import Random.Pcg exposing (int, map, Generator, step, Seed)
 
 chars : Array.Array String
 chars = Array.fromList [
@@ -13,5 +14,13 @@ chars = Array.fromList [
   "T", "T", "T", "T", "T", "T", "T", "T", "U", "U", "U", "V", "V", "W", "W",
   "W", "X", "Y", "Y", "Y", "Z"]
 
-randomLetter : Generator (Maybe String)
-randomLetter = map (\n -> Array.get n chars) ( int 0 ( Array.length chars ) )
+letterGenerator : Generator (Maybe String)
+letterGenerator =
+  map (\n -> Array.get n chars) ( int 0 ( Array.length chars ) )
+
+randomLetter : Seed -> (String, Seed)
+randomLetter seed =
+  let
+    ( letter, seed ) = step letterGenerator seed
+  in
+    ( fromJust letter, seed )

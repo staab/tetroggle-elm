@@ -33,12 +33,12 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-  { blocks = matrix 20 15 (\location -> newBlock EmptyBlock Nothing location )
+  { blocks = matrix 20 15 (\location -> emptyBlock location )
   , shape = Nothing
   }
 
-newBlock : BlockType -> Maybe String -> Location -> Block
-newBlock blockType letter location =
+emptyBlock : Location -> Block
+emptyBlock location =
   { blockType = EmptyBlock, letter = Nothing, location = location }
 
 newShape : ShapeType -> List Block -> Maybe Shape
