@@ -31,9 +31,13 @@ type alias Model =
   , shape : Maybe Shape
   }
 
+gameSize : { width : Int, height : Int}
+gameSize =
+  { width = 15, height = 20 }
+
 initialModel : Model
 initialModel =
-  { blocks = matrix 20 15 (\location -> emptyBlock location )
+  { blocks = matrix gameSize.height gameSize.width (\location -> emptyBlock location )
   , shape = Nothing
   }
 

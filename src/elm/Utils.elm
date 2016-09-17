@@ -1,4 +1,4 @@
-module Utils exposing (fromJust, last)
+module Utils exposing (fromJust, last, between)
 
 import Debug
 
@@ -11,3 +11,7 @@ fromJust x =
 last : List a -> Maybe a
 last =
     List.foldl (Just >> always) Nothing
+
+between : Int -> Int -> Int -> Bool
+between min max value =
+  value >= min && value <= max
