@@ -19,7 +19,7 @@ shapeTypes =
 
 shapeTypeGenerator : Generator ( Maybe ShapeType )
 shapeTypeGenerator =
-  map (\n -> Array.get n shapeTypes) ( int 0 ( Array.length shapeTypes ) )
+  map (\n -> Array.get n shapeTypes) ( int 0 ( ( Array.length shapeTypes ) - 1 ) )
 
 randomShapeType : Seed -> (ShapeType, Seed)
 randomShapeType seed =
@@ -50,16 +50,16 @@ blockListFromShapeType shapeType =
         [ loc 0 0, loc 1 0, loc 0 1, loc 1 1 ]
     PipeShape ->
       List.map locationToFullBlock
-        [ loc 0 0, loc 1 0, loc 0 1, loc 1 1 ]
+        [ loc 0 0, loc 1 0, loc 2 0, loc 2 1 ]
     PyramidShape ->
       List.map locationToFullBlock
-        [ loc 0 0, loc 1 0, loc 0 1, loc 1 1 ]
+        [ loc 1 0, loc 0 1, loc 1 1, loc 2 1 ]
     LongShape ->
       List.map locationToFullBlock
-        [ loc 0 0, loc 1 0, loc 0 1, loc 1 1 ]
+        [ loc 0 0, loc 1 0, loc 2 0, loc 3 0 ]
     SnakeShape->
       List.map locationToFullBlock
-        [ loc 0 0, loc 1 0, loc 0 1, loc 1 1 ]
+        [ loc 0 0, loc 1 0, loc 1 1, loc 2 1 ]
 
 randomShapeBlocks : ShapeType -> Seed -> (List Block, Seed)
 randomShapeBlocks shapeType seed =
