@@ -21,9 +21,12 @@ update msg model =
 
     TetrisMsg subMsg ->
       let
-        ( updatedTetris, cmd ) = Tetris.Update.update subMsg model.tetris model.seed
+        ( updatedTetris, seed, cmd ) = Tetris.Update.update subMsg model.tetris model.seed
       in
-        ( { model | tetris = updatedTetris }, Cmd.map TetrisMsg cmd )
+        ( { model |
+            tetris = updatedTetris,
+            seed = seed
+          }, Cmd.map TetrisMsg cmd )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

@@ -35,13 +35,6 @@ locationToFullBlock location =
   , letter = Nothing
   }
 
-addLetterToBlock : Seed -> Block -> (Block, Seed)
-addLetterToBlock seed block =
-  let
-    ( letter, seed ) = randomLetter seed
-  in
-    ( { block | letter = Just letter }, seed )
-
 blockListFromShapeType : ShapeType -> (List Block)
 blockListFromShapeType shapeType =
   case shapeType of
@@ -61,9 +54,20 @@ blockListFromShapeType shapeType =
       List.map locationToFullBlock
         [ loc 0 0, loc 1 0, loc 1 1, loc 2 1 ]
 
+addLetterToBlock : Block -> Seed -> (Block, Seed)
+addLetterToBlock block seed =
+  let
+    ( letter, newSeed ) = randomLetter seed
+  in
+    ( { block | letter = Just letter }, newSeed )
+
+randomShapeBlocksReducer : Block -> (List Block, Seed) -> (List Block, Seed)
+randomShapeBlocksReducer block (blocks, seed) =
+  let
+    (newBlock, newSeed) = addLetterToBlock block seed
+  in
+    (newBlock :: blocks, newSeed)
+
 randomShapeBlocks : ShapeType -> Seed -> (List Block, Seed)
 randomShapeBlocks shapeType seed =
-  let
-    results = List.map ( addLetterToBlock seed ) ( blockListFromShapeType shapeType )
-  in
-    ( List.map fst results, snd (fromJust ( last results ) ) )
+  List.foldr randomShapeBlocksReducer ( [], seed ) ( blockListFromShapeType shapeType )

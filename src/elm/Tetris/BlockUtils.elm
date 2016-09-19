@@ -1,4 +1,4 @@
-module Tetris.BlockUtils exposing (moveBlock, blockCollision)
+module Tetris.BlockUtils exposing (moveBlock, blockCollision, isSameBlock)
 
 import Matrix exposing (Matrix, row, col, loc, get)
 import Tetris.Models exposing (Block, BlockType(EmptyBlock))
@@ -23,3 +23,7 @@ blockCollision list matrix =
           Just other -> other.blockType /= EmptyBlock
   in
     List.any collision list
+
+isSameBlock : Block -> Block -> Bool
+isSameBlock block1 block2 =
+  block1.location == block2.location

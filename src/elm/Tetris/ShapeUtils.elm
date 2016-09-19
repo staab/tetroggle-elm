@@ -5,19 +5,20 @@ import Matrix exposing (set, row, col, Location, Matrix)
 import Utils exposing (fromJust, between)
 import Tetris.Models exposing (Model, Shape, Block, newShape, emptyBlock, gameSize)
 import Tetris.Utils exposing (randomShapeType, randomShapeBlocks)
-import Tetris.BlockUtils exposing (moveBlock, blockCollision)
+import Tetris.BlockUtils exposing (moveBlock, blockCollision, isSameBlock)
 
-addShape : Model -> Seed -> Model
+addShape : Model -> Seed -> (Model, Seed)
 addShape model seed =
   let
     ( shapeType, seed1 ) = randomShapeType seed
     ( blocks, seed2 ) = randomShapeBlocks shapeType seed1
     shape = newShape shapeType blocks
-  in
-    { model |
-      shape = shape,
-      blocks = applyShape model.blocks <| fromJust shape
-    }
+    newModel =
+      { model |
+        shape = shape,
+        blocks = applyShape model.blocks ( fromJust shape )
+      }
+  in (newModel, seed2)
 
 moveShape : Model -> Model
 moveShape model =
@@ -52,7 +53,7 @@ shapeCollision : List Block -> List Block -> Matrix Block -> Bool
 shapeCollision oldBlocks newBlocks blocks =
   let
     checkBlocks =
-      List.filter (\block -> not ( List.member block oldBlocks )) newBlocks
+      List.filter (\block -> not ( List.any ( isSameBlock block ) oldBlocks ) ) newBlocks
   in
     -- Check the bottom of the game
     List.any ( .location >> isInGame >> not ) checkBlocks
