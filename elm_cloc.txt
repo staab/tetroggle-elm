@@ -1,0 +1,3 @@
+elm
+    filter remove_matches ^\s*--
+    extension elm
