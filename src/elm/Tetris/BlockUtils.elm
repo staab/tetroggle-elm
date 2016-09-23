@@ -3,11 +3,11 @@ module Tetris.BlockUtils exposing (moveBlock, blockCollision, isSameBlock)
 import Matrix exposing (Matrix, row, col, loc, get)
 import Tetris.Models exposing (Block, BlockType(EmptyBlock))
 
-moveBlock : Block -> Block
-moveBlock block =
+moveBlock : Int -> Int -> Block -> Block
+moveBlock rowDelta colDelta block =
   { block |
     location =
-      loc ( ( row block.location ) + 1 ) ( col block.location )
+      loc ( ( row block.location ) + rowDelta ) ( ( col block.location ) + colDelta )
   }
 
 blockCollision : List Block -> Matrix Block -> Bool

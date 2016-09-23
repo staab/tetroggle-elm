@@ -1,4 +1,4 @@
-module Tetris.ShapeUtils exposing (addShape, moveShape, unapplyShape, applyShape)
+module Tetris.ShapeUtils exposing (addShape, moveShape, rotateShape, stompShape)
 
 import Random.Pcg exposing (Seed)
 import Matrix exposing (set, row, col, Location, Matrix)
@@ -6,6 +6,8 @@ import Utils exposing (fromJust, between)
 import Tetris.Models exposing (Model, Shape, Block, newShape, emptyBlock, gameSize)
 import Tetris.Utils exposing (randomShapeType, randomShapeBlocks)
 import Tetris.BlockUtils exposing (moveBlock, blockCollision, isSameBlock)
+
+-- Model Updaters
 
 addShape : Model -> Seed -> (Model, Seed)
 addShape model seed =
@@ -20,11 +22,11 @@ addShape model seed =
       }
   in (newModel, seed2)
 
-moveShape : Model -> Model
-moveShape model =
+moveShape : Model -> Int -> Int -> Model
+moveShape model rowDelta colDelta =
   let
     oldShape = fromJust model.shape
-    newBlocks = List.map moveBlock oldShape.blocks
+    newBlocks = List.map ( moveBlock rowDelta colDelta ) oldShape.blocks
     collision = shapeCollision oldShape.blocks newBlocks model.blocks
     newShape = { oldShape | blocks = newBlocks }
   in
@@ -36,6 +38,18 @@ moveShape model =
         else
           applyShape ( unapplyShape model.blocks oldShape ) newShape
     }
+
+rotateShape : Model -> Model
+rotateShape model =
+  model
+
+stompShape : Model -> Model
+stompShape model =
+  model
+
+
+
+-- Helpers
 
 unapplyShape : Matrix Block -> Shape -> Matrix Block
 unapplyShape blocks shape =
