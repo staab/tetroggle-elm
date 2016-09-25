@@ -22,22 +22,22 @@ addShape model seed =
       }
   in (newModel, seed2)
 
-moveShape : Model -> Int -> Int -> Model
-moveShape model rowDelta colDelta =
+moveShape : Model -> Int -> Int -> (Maybe Shape -> Maybe Shape) -> Model
+moveShape model rowDelta colDelta onCollision =
   let
     oldShape = fromJust model.shape
     newBlocks = List.map ( moveBlock rowDelta colDelta ) oldShape.blocks
     collision = shapeCollision oldShape.blocks newBlocks model.blocks
-    newShape = { oldShape | blocks = newBlocks }
+    newShape = Just { oldShape | blocks = newBlocks }
   in
-    { model |
-      shape = if collision then Nothing else Just newShape,
-      blocks =
-        if collision then
-          model.blocks
-        else
-          applyShape ( unapplyShape model.blocks oldShape ) newShape
-    }
+    if collision then
+      { model | shape = onCollision model.shape }
+    else
+      { model |
+        shape = newShape,
+        blocks =
+          applyShape ( unapplyShape model.blocks oldShape ) (fromJust newShape)
+      }
 
 rotateShape : Model -> Model
 rotateShape model =
@@ -46,8 +46,6 @@ rotateShape model =
 stompShape : Model -> Model
 stompShape model =
   model
-
-
 
 -- Helpers
 
@@ -76,4 +74,5 @@ shapeCollision oldBlocks newBlocks blocks =
 
 isInGame : Location -> Bool
 isInGame location =
-  row location > gameSize.height || between 0 gameSize.width ( col location )
+  row location > gameSize.height
+  || between 0 gameSize.width ( col location )
