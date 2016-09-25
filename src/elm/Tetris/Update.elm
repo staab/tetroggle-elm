@@ -1,13 +1,19 @@
 module Tetris.Update exposing (update)
 
 import Random.Pcg exposing (Seed)
-import Tetris.Messages exposing (Msg(Tick, KeyPress))
+import Tetris.Messages exposing (Msg(Tick, KeyPress, WindowHeightFail, WindowHeightDone))
 import Tetris.Models exposing (Model)
 import Tetris.ShapeUtils exposing (addShape, moveShape, rotateShape, stompShape)
 
 update : Msg -> Model -> Seed -> ( Model, Seed, Cmd Msg )
 update message model seed =
   case message of
+    WindowHeightFail ->
+      ( model, seed, Cmd.none )
+
+    WindowHeightDone height ->
+      ( { model | windowHeight = height }, seed, Cmd.none )
+
     Tick time ->
       case model.shape of
         Nothing ->

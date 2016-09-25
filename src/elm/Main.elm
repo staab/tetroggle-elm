@@ -4,6 +4,7 @@ import Random.Pcg exposing (initialSeed)
 import Models exposing (Flags, Model, initialModel)
 import Messages exposing (Msg(..))
 import Views exposing (view)
+import Tetris.Commands exposing (getWindowHeight)
 import Tetris.Update
 import Tetris.Subscriptions
 
@@ -12,7 +13,7 @@ init flags =
   let
     seed = initialSeed flags.seed
   in
-    ( initialModel seed, Cmd.none )
+    ( initialModel seed, Cmd.map TetrisMsg getWindowHeight )
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =

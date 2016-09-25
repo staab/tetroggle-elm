@@ -26,7 +26,12 @@
 }
 
 .tetris-block {
-  display: inline-block;
-  border: 1px solid black;
+  float: left;
+  text-align: center;
   margin: 1px;
+  background-color: white;
+
+  &.full-block {
+    background-color: #ddf;
+  }
 }

@@ -1,4 +1,4 @@
-module Utils exposing (fromJust, last, between)
+module Utils exposing (fromJust, last, between, divide)
 
 import Debug
 
@@ -15,3 +15,7 @@ last =
 between : Int -> Int -> Int -> Bool
 between min max value =
   value >= min && value <= max
+
+divide : Int -> Int -> Float
+divide a b =
+  ( toFloat a ) / ( toFloat b )
