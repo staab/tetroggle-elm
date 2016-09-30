@@ -40,19 +40,19 @@ blockListFromShapeType shapeType =
   case shapeType of
     SquareShape ->
       List.map locationToFullBlock
-        [ loc 0 0, loc 1 0, loc 0 1, loc 1 1 ]
+        [ loc -2 0, loc -1 0, loc -2 1, loc -1 1 ]
     PipeShape ->
       List.map locationToFullBlock
-        [ loc 0 0, loc 1 0, loc 2 0, loc 2 1 ]
+        [ loc -3 0, loc -2 0, loc -1 0, loc -1 1 ]
     PyramidShape ->
       List.map locationToFullBlock
-        [ loc 1 0, loc 0 1, loc 1 1, loc 2 1 ]
+        [ loc -3 0, loc -1 1, loc -2 1, loc -3 1 ]
     LongShape ->
       List.map locationToFullBlock
-        [ loc 0 0, loc 1 0, loc 2 0, loc 3 0 ]
+        [ loc -4 0, loc -3 0, loc -2 0, loc -1 0 ]
     SnakeShape->
       List.map locationToFullBlock
-        [ loc 0 0, loc 1 0, loc 1 1, loc 2 1 ]
+        [ loc -3 0, loc -2 0, loc -2 1, loc -3 1 ]
 
 addLetterToBlock : Block -> Seed -> (Block, Seed)
 addLetterToBlock block seed =

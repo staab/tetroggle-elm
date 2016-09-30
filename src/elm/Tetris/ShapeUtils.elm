@@ -27,7 +27,7 @@ moveShape model rowDelta colDelta onCollision =
   let
     oldShape = fromJust model.shape
     newBlocks = List.map ( moveBlock rowDelta colDelta ) oldShape.blocks
-    collision = shapeCollision oldShape.blocks newBlocks model.blocks
+    collision = Debug.log "collision" (shapeCollision oldShape.blocks newBlocks model.blocks)
     newShape = Just { oldShape | blocks = newBlocks }
   in
     if collision then
@@ -64,13 +64,18 @@ applyShape blocks shape =
 shapeCollision : List Block -> List Block -> Matrix Block -> Bool
 shapeCollision oldBlocks newBlocks blocks =
   let
-    checkBlocks =
-      List.filter (\block -> not ( List.any ( isSameBlock block ) oldBlocks ) ) newBlocks
+    -- Quick function for checking. Only check blocks that aren't redundant,
+    -- And which are in the actual game (not buffered above)
+    shouldCheck : Block -> Bool
+    shouldCheck block =
+      not ( List.any ( isSameBlock block ) oldBlocks )
+        && row block.location >= 0
+    checkBlocks = List.filter shouldCheck newBlocks
   in
     -- Check the bottom of the game
     List.any ( .location >> isInGame >> not ) checkBlocks
     -- Check any blocks below
-      || ( blockCollision checkBlocks blocks )
+      || blockCollision checkBlocks blocks
 
 isInGame : Location -> Bool
 isInGame location =
