@@ -1,6 +1,7 @@
-module Tetris.BlockUtils exposing (moveBlock, blockCollision, isSameBlock)
+module Tetris.BlockUtils exposing (moveBlock, blockCollision, isSameBlock, getCorner)
 
-import Matrix exposing (Matrix, row, col, loc, get)
+import Matrix exposing (Location, Matrix, row, col, loc, get)
+import Utils exposing (fromJust)
 import Tetris.Models exposing (Block, BlockType(EmptyBlock))
 
 moveBlock : Int -> Int -> Block -> Block
@@ -27,3 +28,7 @@ blockCollision list matrix =
 isSameBlock : Block -> Block -> Bool
 isSameBlock block1 block2 =
   block1.location == block2.location
+
+getCorner : (Location -> Int) -> (List Int -> Maybe a) -> (List Block -> a)
+getCorner rowOrCol minOrMax =
+  List.map .location >> List.map rowOrCol >> minOrMax >> fromJust
