@@ -29,21 +29,33 @@ addShape model seed =
       }
   in (newModel, seed2)
 
-moveShape : Model -> Int -> Int -> (Maybe Shape -> Maybe Shape) -> Model
-moveShape model rowDelta colDelta onCollision =
+forceMoveShape : Model -> Int -> Int -> (Shape, Bool)
+forceMoveShape model rowDelta colDelta =
   let
     oldShape = fromJust model.shape
     newBlocks = List.map ( moveBlock rowDelta colDelta ) oldShape.blocks
     collision = shapeCollision oldShape.blocks newBlocks model.blocks
-    newShape = Just { oldShape | blocks = newBlocks }
+    newShape = { oldShape | blocks = newBlocks }
+  in
+    (newShape, collision)
+
+moveShape : Model -> Int -> Int -> (Maybe Shape -> Maybe Shape) -> Model
+moveShape model rowDelta colDelta onCollision =
+  let
+    (shape, collision) = forceMoveShape model rowDelta colDelta
   in
     if collision then
       { model | shape = onCollision model.shape }
     else
-      { model |
-        shape = newShape,
-        blocks = replaceShape model.blocks oldShape ( fromJust newShape )
-      }
+      modifyModelShape model shape
+
+modifyModelShape : Model -> Shape -> Model
+modifyModelShape model shape =
+  { model |
+    shape = Just shape,
+    blocks =
+      replaceShape model.blocks ( fromJust model.shape ) shape
+  }
 
 -- Algorithm from http://stackoverflow.com/a/2259502/1467342
 -- translate shape to origin, rotate, translate back
@@ -76,7 +88,14 @@ rotateShape model =
 
 stompShape : Model -> Model
 stompShape model =
-  model
+  let
+    (newShape, collision) = forceMoveShape model 1 0
+  in
+    case collision of
+      True ->
+        model
+      False ->
+        stompShape ( modifyModelShape model newShape )
 
 -- Helpers
 
