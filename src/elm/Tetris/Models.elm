@@ -15,6 +15,13 @@ type ShapeType
   | LongShape
   | SnakeShape
 
+type alias BBox =
+  { minX : Int
+  , maxX : Int
+  , minY : Int
+  , maxY : Int
+  }
+
 type alias Block =
   { blockType : BlockType
   , letter : Maybe String

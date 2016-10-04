@@ -1,8 +1,15 @@
-module Tetris.BlockUtils exposing (moveBlock, blockCollision, isSameBlock, getCorner)
+module Tetris.BlockUtils exposing (
+  moveBlock,
+  blockCollision,
+  isSameBlock,
+  getCorner,
+  getBBox,
+  rotateBlock,
+  adjustBlocksX)
 
 import Matrix exposing (Location, Matrix, row, col, loc, get)
 import Utils exposing (fromJust)
-import Tetris.Models exposing (Block, BlockType(EmptyBlock))
+import Tetris.Models exposing (Block, BlockType(EmptyBlock), BBox, gameSize)
 
 moveBlock : Int -> Int -> Block -> Block
 moveBlock rowDelta colDelta block =
@@ -32,3 +39,47 @@ isSameBlock block1 block2 =
 getCorner : (Location -> Int) -> (List Int -> Maybe a) -> (List Block -> a)
 getCorner rowOrCol minOrMax =
   List.map .location >> List.map rowOrCol >> minOrMax >> fromJust
+
+getBBox : List Block -> BBox
+getBBox blocks =
+    { minX = getCorner col List.minimum blocks
+    , maxX = getCorner col List.maximum blocks
+    , minY = getCorner row List.minimum blocks
+    , maxY = getCorner row List.maximum blocks
+    }
+
+rotateBlock : Int -> Int -> Block -> Block
+rotateBlock cx cy block =
+  let
+    x = col block.location
+    y = row block.location
+  in
+    { block |
+      location = loc
+                   ( ( negate ( x - cx ) ) + cy )
+                   ( ( y - cy ) + cx )
+    }
+
+adjustBlock : Int -> Int -> Block -> Block
+adjustBlock dx dy block =
+  let
+    x = col block.location
+    y = row block.location
+  in
+    { block | location = loc ( y + dy ) ( x + dx ) }
+
+getXAdjustment : BBox -> Int
+getXAdjustment bbox =
+  if bbox.minX < 0 then
+    negate bbox.minX
+  else if bbox.maxX > gameSize.width then
+    negate ( bbox.maxX - gameSize.width )
+  else
+    0
+
+adjustBlocksX : List Block -> List Block
+adjustBlocksX blocks =
+  let
+    dx = getXAdjustment ( getBBox blocks )
+  in
+    List.map ( adjustBlock dx 0 ) blocks
