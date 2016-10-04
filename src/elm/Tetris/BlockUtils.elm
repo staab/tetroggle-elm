@@ -5,7 +5,7 @@ module Tetris.BlockUtils exposing (
   getCorner,
   getBBox,
   rotateBlock,
-  adjustBlocksX)
+  adjustBlocks)
 
 import Matrix exposing (Location, Matrix, row, col, loc, get)
 import Utils exposing (fromJust)
@@ -77,9 +77,16 @@ getXAdjustment bbox =
   else
     0
 
-adjustBlocksX : List Block -> List Block
-adjustBlocksX blocks =
+getYAdjustment : BBox -> BBox -> Int
+getYAdjustment oldBBox newBBox =
+  oldBBox.maxY - newBBox.maxY
+
+adjustBlocks : List Block -> List Block -> List Block
+adjustBlocks oldBlocks newBlocks =
   let
-    dx = getXAdjustment ( getBBox blocks )
+    oldBBox = getBBox oldBlocks
+    newBBox = getBBox newBlocks
+    dx = getXAdjustment newBBox
+    dy = getYAdjustment oldBBox newBBox
   in
-    List.map ( adjustBlock dx 0 ) blocks
+    List.map ( adjustBlock dx dy ) newBlocks

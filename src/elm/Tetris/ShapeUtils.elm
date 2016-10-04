@@ -12,7 +12,7 @@ import Tetris.BlockUtils exposing (
   getCorner,
   getBBox,
   rotateBlock,
-  adjustBlocksX)
+  adjustBlocks)
 
 -- Model Updaters
 
@@ -61,7 +61,10 @@ rotateShape model =
     cy = ((oldBBox.maxY - oldBBox.minY) // 2) + oldBBox.minY
 
     -- Rotate the blocks
-    newBlocks = adjustBlocksX ( List.map ( rotateBlock cx cy ) oldShape.blocks )
+    newBlocks =
+      adjustBlocks
+        oldShape.blocks
+        ( List.map ( rotateBlock cx cy ) oldShape.blocks )
 
     -- Adjust if necessary
     newShape = Just { oldShape | blocks = newBlocks }
@@ -70,35 +73,6 @@ rotateShape model =
       shape = newShape,
       blocks = replaceShape model.blocks oldShape ( fromJust newShape )
     }
-
---rotateShape : Model -> Model
---rotateShape model =
---  let
---    shape = (fromJust model.shape)
---    blocks = shape.blocks
---    minX = getCorner col List.minimum blocks
---    maxX = getCorner col List.maximum blocks
---    minY = getCorner row List.minimum blocks
---    maxY = getCorner row List.maximum blocks
---    cx = ((maxX - minX) // 2) + minX
---    cy = ((maxY - minY) // 2) + minY
---    newLocation : Block -> Location
---    newLocation block =
---      let
---        x = col block.location
---        y = row block.location
---      in
---        loc
---          ( ( negate ( x - cx ) ) + cy )
---          ( ( y - cy ) + cx )
---    newBlocks = List.map (\block -> { block | location = newLocation block }) blocks
---    newShape = Just { shape | blocks = newBlocks }
---  in
---    { model |
---      shape = newShape,
---      blocks = replaceShape model.blocks shape ( fromJust newShape )
---    }
-
 
 stompShape : Model -> Model
 stompShape model =
