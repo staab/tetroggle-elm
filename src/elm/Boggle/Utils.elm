@@ -16,7 +16,7 @@ chars = Array.fromList [
 
 letterGenerator : Generator (Maybe String)
 letterGenerator =
-  map (\n -> Array.get n chars) ( int 0 ( Array.length chars ) )
+  map (\n -> Array.get n chars) ( int 0 ( ( Array.length chars ) - 1 ) )
 
 randomLetter : Seed -> (String, Seed)
 randomLetter seed =
