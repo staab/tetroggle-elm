@@ -1,4 +1,4 @@
-module Tetris.ShapeUtils exposing (addShape, moveShape, rotateShape, stompShape)
+module Tetris.ShapeUtils exposing (addShape, moveShape, rotateShape, stompShape, modifyModelShape)
 
 import Random.Pcg exposing (Seed)
 import Matrix exposing (set, row, col, loc, Location, Matrix)
@@ -29,8 +29,8 @@ addShape model seed =
       }
   in (newModel, seed2)
 
-forceMoveShape : Model -> Int -> Int -> (Shape, Bool)
-forceMoveShape model rowDelta colDelta =
+moveShape : Model -> Int -> Int -> (Shape, Bool)
+moveShape model rowDelta colDelta =
   let
     oldShape = fromJust model.shape
     newBlocks = List.map ( moveBlock rowDelta colDelta ) oldShape.blocks
@@ -39,20 +39,10 @@ forceMoveShape model rowDelta colDelta =
   in
     (newShape, collision)
 
-moveShape : Model -> Int -> Int -> (Maybe Shape -> Maybe Shape) -> Model
-moveShape model rowDelta colDelta onCollision =
-  let
-    (shape, collision) = forceMoveShape model rowDelta colDelta
-  in
-    if collision then
-      { model | shape = onCollision model.shape }
-    else
-      modifyModelShape model shape
-
-modifyModelShape : Model -> Shape -> Model
+modifyModelShape : Model -> Maybe Shape -> Model
 modifyModelShape model shape =
   { model |
-    shape = Just shape,
+    shape = shape,
     blocks =
       replaceShape model.blocks ( fromJust model.shape ) shape
   }
@@ -83,19 +73,19 @@ rotateShape model =
   in
     { model |
       shape = newShape,
-      blocks = replaceShape model.blocks oldShape ( fromJust newShape )
+      blocks = replaceShape model.blocks oldShape newShape
     }
 
 stompShape : Model -> Model
 stompShape model =
   let
-    (newShape, collision) = forceMoveShape model 1 0
+    (newShape, collision) = moveShape model 1 0
   in
     case collision of
       True ->
         model
       False ->
-        stompShape ( modifyModelShape model newShape )
+        stompShape ( modifyModelShape model ( Just newShape ) )
 
 -- Helpers
 
@@ -119,9 +109,11 @@ applyShape blocks shape =
     (\block blocks -> set block.location block blocks)
     blocks shape.blocks
 
-replaceShape : Matrix Block -> Shape -> Shape -> Matrix Block
+replaceShape : Matrix Block -> Shape -> Maybe Shape -> Matrix Block
 replaceShape blocks old new =
-  applyShape ( unapplyShape blocks old ) new
+  case new of
+    Nothing -> unapplyShape blocks old
+    Just shape -> applyShape ( unapplyShape blocks old ) shape
 
 shapeCollision : List Block -> List Block -> Matrix Block -> Bool
 shapeCollision oldBlocks newBlocks blocks =
