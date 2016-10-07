@@ -37,6 +37,7 @@ type alias Model =
   { blocks : Matrix Block
   , shape : Maybe Shape
   , windowHeight : Int
+  , gameOver : Bool
   }
 
 gameSize : { width : Int, height : Int}
@@ -48,6 +49,7 @@ initialModel =
   { blocks = matrix gameSize.height gameSize.width (\location -> emptyBlock location )
   , shape = Nothing
   , windowHeight = 0
+  , gameOver = False
   }
 
 emptyBlock : Location -> Block

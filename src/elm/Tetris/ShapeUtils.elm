@@ -1,4 +1,10 @@
-module Tetris.ShapeUtils exposing (addShape, moveShape, rotateShape, stompShape, modifyModelShape)
+module Tetris.ShapeUtils exposing (
+  addShape,
+  moveShape,
+  rotateShape,
+  stompShape,
+  modifyModelShape,
+  isAboveGame)
 
 import Random.Pcg exposing (Seed)
 import Matrix exposing (set, row, col, loc, Location, Matrix)
@@ -135,3 +141,9 @@ isInGame : Location -> Bool
 isInGame location =
   row location > gameSize.height
   || between 0 gameSize.width ( col location )
+
+isAboveGame : Maybe Shape -> Bool
+isAboveGame maybeShape =
+  case maybeShape of
+    Nothing -> False
+    Just shape -> List.any (\block -> row block.location < 0) shape.blocks
