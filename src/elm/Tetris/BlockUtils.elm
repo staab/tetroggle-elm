@@ -5,7 +5,8 @@ module Tetris.BlockUtils exposing (
   getCorner,
   getBBox,
   rotateBlock,
-  adjustBlocks)
+  adjustBlocks,
+  inBlocks)
 
 import Matrix exposing (Location, Matrix, row, col, loc, get)
 import Utils exposing (fromJust)
@@ -35,6 +36,10 @@ blockCollision list matrix =
 isSameBlock : Block -> Block -> Bool
 isSameBlock block1 block2 =
   block1.location == block2.location
+
+inBlocks : List Block -> Block -> Bool
+inBlocks blocks block =
+  List.any ( isSameBlock block ) blocks
 
 getCorner : (Location -> Int) -> (List Int -> Maybe a) -> (List Block -> a)
 getCorner rowOrCol minOrMax =

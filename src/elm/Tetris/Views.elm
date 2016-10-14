@@ -6,7 +6,11 @@ import Array exposing (Array)
 import Utils exposing (divide)
 import Html exposing (Html, Attribute, div, text, span)
 import Html.Attributes exposing (class, style)
-import Tetris.Models exposing (Model, Block, gameSize, BlockType(FullBlock))
+import Tetris.Models exposing (
+  Model,
+  Block,
+  gameSize,
+  BlockType(FullBlock, SelectedBlock, EmptyBlock))
 
 view : Model -> Html a
 view model =
@@ -35,10 +39,15 @@ blockDiv height block =
 
 blockClass : Block -> String
 blockClass block =
-  if block.blockType == FullBlock then
-    "tetris-block" ++ " full-block"
-  else
-    "tetris-block"
+  case block.blockType of
+    FullBlock ->
+      "tetris-block" ++ " full-block"
+
+    SelectedBlock ->
+      "tetris-block" ++ " selected-block"
+
+    EmptyBlock ->
+      "tetris-block"
 
 px : Float -> String
 px value =

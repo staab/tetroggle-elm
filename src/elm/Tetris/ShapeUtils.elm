@@ -4,7 +4,8 @@ module Tetris.ShapeUtils exposing (
   rotateShape,
   stompShape,
   modifyModelShape,
-  isAboveGame)
+  isAboveGame,
+  blockInShape)
 
 import Random.Pcg exposing (Seed)
 import Matrix exposing (set, row, col, loc, Location, Matrix)
@@ -18,7 +19,8 @@ import Tetris.BlockUtils exposing (
   getCorner,
   getBBox,
   rotateBlock,
-  adjustBlocks)
+  adjustBlocks,
+  inBlocks)
 
 -- Model Updaters
 
@@ -147,3 +149,12 @@ isAboveGame maybeShape =
   case maybeShape of
     Nothing -> False
     Just shape -> List.any (\block -> row block.location < 0) shape.blocks
+
+blockInShape : Maybe Shape -> Block -> Bool
+blockInShape maybeShape block =
+  case maybeShape of
+    Just shape ->
+      inBlocks shape.blocks block
+
+    Nothing ->
+      False
