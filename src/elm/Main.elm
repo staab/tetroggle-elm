@@ -18,7 +18,8 @@ init flags =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    NoOp -> ( model, Cmd.none )
+    NoOp ->
+      ( model, Cmd.none )
 
     TetrisMsg subMsg ->
       let
@@ -28,6 +29,9 @@ update msg model =
             tetris = updatedTetris,
             seed = seed
           }, Cmd.map TetrisMsg cmd )
+
+    BoggleMsg subMsg ->
+      ( model, Cmd.none )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
