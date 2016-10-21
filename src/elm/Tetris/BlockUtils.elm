@@ -6,11 +6,14 @@ module Tetris.BlockUtils exposing (
   getBBox,
   rotateBlock,
   adjustBlocks,
-  inBlocks)
+  inBlocks,
+  selectBlock,
+  findWord)
 
+import String
 import Matrix exposing (Location, Matrix, row, col, loc, get)
-import Utils exposing (fromJust)
-import Tetris.Models exposing (Block, BlockType(EmptyBlock), BBox, gameSize)
+import Utils exposing (fromJust, last)
+import Tetris.Models exposing (Block, BlockType(EmptyBlock, SelectedBlock), BBox, gameSize)
 
 moveBlock : Int -> Int -> Block -> Block
 moveBlock rowDelta colDelta block =
@@ -95,3 +98,45 @@ adjustBlocks oldBlocks newBlocks =
     dy = getYAdjustment oldBBox newBBox
   in
     List.map ( adjustBlock dx dy ) newBlocks
+
+selectBlock : List Block -> Block -> Block
+selectBlock selections block =
+  if inBlocks selections block then
+    { block | blockType = SelectedBlock }
+  else
+    block
+
+findWord : String -> List Block -> List Block -> List Block
+findWord word allBlocks blocks =
+  let
+    parts = String.uncons word
+  in
+    case parts of
+      Nothing -> []
+      Just (letter, tail) ->
+        let
+          selections = List.filter
+            (\block -> fromJust block.letter == String.fromChar letter)
+            blocks
+          results = List.map
+            (\selection -> findNeighbors tail allBlocks [selection])
+            selections
+        in
+          case List.head results of
+            Nothing -> []
+            Just result -> result
+
+getNeighbors : Block -> List Block -> List Block
+getNeighbors block allBlocks =
+  List.filter
+    (\compare ->
+      ( ( abs ( row compare.location ) - ( row block.location ) ) < 2 )
+      && ( ( abs ( col compare.location ) - ( col block.location ) ) < 2 ) )
+    allBlocks
+
+findNeighbors : String -> List Block -> List Block -> List Block
+findNeighbors word allBlocks selection =
+  let
+    neighbors = getNeighbors ( fromJust ( last selection ) ) allBlocks
+  in
+    Debug.log "results" neighbors
