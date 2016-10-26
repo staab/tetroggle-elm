@@ -9,6 +9,7 @@ module Tetris.BlockUtils exposing (
   inBlocks,
   hasLetter)
 
+import String
 import Matrix exposing (Location, Matrix, row, col, loc, get)
 import Utils exposing (fromJust, last)
 import Tetris.Models exposing (Block, BlockType(EmptyBlock, SelectedBlock), BBox, gameSize)
@@ -97,8 +98,8 @@ adjustBlocks oldBlocks newBlocks =
   in
     List.map ( adjustBlock dx dy ) newBlocks
 
-hasLetter : String -> Block -> Bool
+hasLetter : Char -> Block -> Bool
 hasLetter letter block =
   case block.letter of
     Nothing -> False
-    Just blockLetter -> blockLetter == letter
+    Just blockLetter -> blockLetter == ( letter |> String.fromChar |> String.toUpper)
