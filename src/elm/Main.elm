@@ -6,6 +6,7 @@ import Messages exposing (Msg(..))
 import Views exposing (view)
 import Tetris.Commands exposing (getWindowHeight)
 import Tetris.Update
+import Tetris.Highlight
 import Tetris.Subscriptions
 import Tetris.Messages
 import Boggle.Update
@@ -50,7 +51,7 @@ updateBoggle msg model =
   in
     case msg of
       Boggle.Messages.NewInput input ->
-        ( { model | tetris = Tetris.Update.updateHighlight updatedModel.tetris input }, updateCmd )
+        ( { model | tetris = Tetris.Highlight.updateHighlight updatedModel.tetris input }, updateCmd )
 
       Boggle.Messages.NoOp ->
         ( updatedModel, updateCmd )

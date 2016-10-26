@@ -1,7 +1,5 @@
-module Tetris.Update exposing (update, updateHighlight)
+module Tetris.Update exposing (update)
 
-import String
-import Matrix
 import Random.Pcg exposing (Seed)
 import Tetris.Messages exposing (Msg(Tick, KeyPress, WindowHeightFail, WindowHeightDone))
 import Tetris.Models exposing (Model, Block, BlockType(SelectedBlock, FullBlock))
@@ -13,7 +11,6 @@ import Tetris.ShapeUtils exposing (
   modifyModelShape,
   isAboveGame,
   blockInShape)
-import Tetris.BlockUtils exposing (inBlocks, selectBlock, findWord)
 
 update : Msg -> Model -> Seed -> ( Model, Seed, Cmd Msg )
 update message model seed =
@@ -78,26 +75,3 @@ update message model seed =
                   ( stompShape model, seed, Cmd.none )
                 _ ->
                   ( model, seed, Cmd.none )
-
-updateHighlight : Model -> String -> Model
-updateHighlight model input =
-  let
-    blocks = Matrix.flatten model.blocks
-    filterSelection : Block -> Bool
-    filterSelection block =
-      not ( blockInShape model.shape block ) && block.blockType == FullBlock
-    selections = findWord
-      ( String.toUpper input )
-      blocks
-      ( List.filter filterSelection blocks )
-  in
-    { model |
-      blocks = model.blocks
-        -- Unselect blocks
-        |> Matrix.map (\block ->
-          if block.blockType == SelectedBlock then
-            { block | blockType = FullBlock }
-          else
-            block)
-        |> Matrix.map ( selectBlock selections )
-    }
