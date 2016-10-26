@@ -67,8 +67,7 @@ traceWordPath word allBlocks selection =
 addToSelection : List Block -> Char -> List Block -> Maybe (List Block)
 addToSelection allBlocks letter selection =
   let
-    maybeNeighbor = getNeighbors (Debug.log "block" ( fromJust ( last selection ) )) allBlocks
-      |> Debug.log "neighbors"
+    maybeNeighbor = getNeighbors ( fromJust ( last selection ) ) allBlocks
       |> List.filter ( hasLetter letter )
       |> List.head
   in

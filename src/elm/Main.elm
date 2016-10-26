@@ -11,6 +11,7 @@ import Tetris.Subscriptions
 import Tetris.Messages
 import Boggle.Update
 import Boggle.Messages
+import Boggle.Subscriptions
 
 init : Flags -> (Model, Cmd Msg)
 init flags =
@@ -51,14 +52,19 @@ updateBoggle msg model =
   in
     case msg of
       Boggle.Messages.NewInput input ->
-        ( { model | tetris = Tetris.Highlight.updateHighlight updatedModel.tetris input }, updateCmd )
+        ( { updatedModel |
+            tetris = Tetris.Highlight.updateHighlight updatedModel.tetris input
+          }, updateCmd )
 
-      Boggle.Messages.NoOp ->
+      _ ->
         ( updatedModel, updateCmd )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.batch [ Tetris.Subscriptions.subscriptions model.tetris |> Sub.map TetrisMsg ]
+  Sub.batch
+    [ Tetris.Subscriptions.subscriptions model.tetris |> Sub.map TetrisMsg
+    , Boggle.Subscriptions.subscriptions model.boggle |> Sub.map BoggleMsg
+    ]
 
 main : Program Flags
 main =

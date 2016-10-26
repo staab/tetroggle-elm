@@ -1,5 +1,8 @@
 module Boggle.Messages exposing (Msg(..))
 
+import Keyboard exposing (KeyCode)
+
 type Msg
-  = NewInput String
+  = KeyPress KeyCode
+  | NewInput String
   | NoOp
