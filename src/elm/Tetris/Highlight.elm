@@ -69,6 +69,7 @@ addToSelection allBlocks letter selection =
   let
     maybeNeighbor = getNeighbors ( fromJust ( last selection ) ) allBlocks
       |> List.filter ( hasLetter letter )
+      |> List.filter ( \block ->  List.member block selection |> not )
       |> List.head
   in
     case maybeNeighbor of
