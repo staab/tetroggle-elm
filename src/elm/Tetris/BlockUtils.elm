@@ -7,12 +7,14 @@ module Tetris.BlockUtils exposing (
   rotateBlock,
   adjustBlocks,
   inBlocks,
-  hasLetter)
+  hasLetter,
+  stompBlocks,
+  isInGame)
 
 import String
-import Matrix exposing (Location, Matrix, row, col, loc, get)
-import Utils exposing (fromJust, last)
-import Tetris.Models exposing (Block, BlockType(EmptyBlock, SelectedBlock), BBox, gameSize)
+import Matrix exposing (Location, Matrix, flatten, row, col, loc, get)
+import Utils exposing (fromJust, last, between)
+import Tetris.Models exposing (Block, BlockType(EmptyBlock, SelectedBlock), BBox, gameSize, emptyBlock)
 
 moveBlock : Int -> Int -> Block -> Block
 moveBlock rowDelta colDelta block =
@@ -42,6 +44,12 @@ isSameBlock block1 block2 =
 inBlocks : List Block -> Block -> Bool
 inBlocks blocks block =
   List.any ( isSameBlock block ) blocks
+
+isInGame : Location -> Bool
+isInGame location =
+  row location > gameSize.height
+  || between 0 gameSize.width ( col location )
+
 
 getCorner : (Location -> Int) -> (List Int -> Maybe a) -> (List Block -> a)
 getCorner rowOrCol minOrMax =
@@ -103,3 +111,30 @@ hasLetter letter block =
   case block.letter of
     Nothing -> False
     Just blockLetter -> blockLetter == ( letter |> String.fromChar |> String.toUpper)
+
+stompBlock : Matrix Block -> Block -> Matrix Block
+stompBlock blocks block =
+  let
+    belowLocation = loc ( ( row block.location ) + 1 ) ( col block.location )
+    maybeBelowBlock = Matrix.get belowLocation blocks
+  in
+    case maybeBelowBlock of
+      Nothing ->
+        blocks
+
+      Just belowBlock ->
+        case belowBlock.blockType of
+          EmptyBlock ->
+            if isInGame belowLocation then
+              blocks
+                |> Matrix.set block.location emptyBlock
+                |> Matrix.set belowBlock.location block
+            else
+              blocks
+
+          _ ->
+            blocks
+
+stompBlocks : Matrix Block -> Matrix Block
+stompBlocks blocks =
+  Matrix.map ( stompBlock blocks ) blocks

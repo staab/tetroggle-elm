@@ -1,4 +1,4 @@
-module Tetris.Highlight exposing (updateHighlight)
+module Tetris.Highlight exposing (updateHighlight, removeHighlighted)
 
 import String
 import Matrix
@@ -9,8 +9,8 @@ import Tetris.Models exposing (
   Model,
   Shape,
   Block,
-  BlockType(FullBlock, SelectedBlock))
-import Tetris.BlockUtils exposing (inBlocks, hasLetter)
+  BlockType(EmptyBlock, FullBlock, SelectedBlock))
+import Tetris.BlockUtils exposing (inBlocks, hasLetter, stompBlocks)
 import Tetris.ShapeUtils exposing (blockInShape)
 
 
@@ -26,6 +26,15 @@ updateHighlight model word =
       |> List.concatMap identity
   in
     { model | blocks = Matrix.map ( highlightBlock selection ) blocks }
+
+removeHighlighted : Model -> Model
+removeHighlighted model =
+  let
+    blocks = model.blocks
+      |> Matrix.map removeHighlightedBlock
+      |> stompBlocks
+  in
+    { model | blocks = blocks }
 
 canHighlight : Maybe Shape -> Block -> Bool
 canHighlight shape block =
@@ -88,6 +97,15 @@ unhighlightBlock : Block -> Block
 unhighlightBlock block =
   if block.blockType == SelectedBlock then
     { block | blockType = FullBlock }
+  else
+    block
+
+removeHighlightedBlock : Block -> Block
+removeHighlightedBlock block =
+  if block.blockType == SelectedBlock then
+    { block |
+      blockType = EmptyBlock
+    , letter = Nothing }
   else
     block
 

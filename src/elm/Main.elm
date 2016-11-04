@@ -47,17 +47,22 @@ updateBoggle : Boggle.Messages.Msg -> Model -> (Model, Cmd Msg)
 updateBoggle msg model =
   let
     ( updatedBoggle, cmd ) = Boggle.Update.update msg model.boggle model.dictionary
-    updatedModel = { model | boggle = updatedBoggle }
+    newModel = { model | boggle = updatedBoggle }
     updateCmd = Cmd.map BoggleMsg cmd
   in
     case msg of
       Boggle.Messages.NewInput input ->
-        ( { updatedModel |
-            tetris = Tetris.Highlight.updateHighlight updatedModel.tetris input
+        ( { newModel |
+            tetris = Tetris.Highlight.updateHighlight newModel.tetris input
+          }, updateCmd )
+
+      Boggle.Messages.SubmitWord success ->
+        ( { newModel |
+            tetris = Tetris.Highlight.removeHighlighted newModel.tetris
           }, updateCmd )
 
       _ ->
-        ( updatedModel, updateCmd )
+        ( newModel, updateCmd )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

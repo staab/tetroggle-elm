@@ -5,7 +5,7 @@ import String
 import Task
 import List exposing (member)
 import Boggle.Models exposing (Model)
-import Boggle.Messages exposing (Msg(KeyPress, NewInput, NoOp))
+import Boggle.Messages exposing (Msg(KeyPress, NewInput, SubmitWord, NoOp))
 
 update : Msg -> Model -> List String -> (Model, Cmd Msg)
 update msg model dictionary =
@@ -27,11 +27,9 @@ update msg model dictionary =
           success =
             String.length model.input > 2
             && member (String.toLower model.input) dictionary
+          cmd = if success then submitCmd else Cmd.none
         in
-          if success then
-            ( model, Cmd.none )
-          else
-            ( model, Cmd.none )
+          ( model, cmd )
 
       -- backspace
       else if code == 8 then
@@ -46,9 +44,16 @@ update msg model dictionary =
     NewInput input ->
       ( { model | input = input }, Cmd.none )
 
+    SubmitWord success ->
+      ( { model | input = "" }, Cmd.none )
+
     NoOp ->
       (model, Cmd.none)
 
 inputCmd : String -> Cmd Msg
 inputCmd input =
   Task.perform ( always NoOp ) NewInput ( Task.succeed input )
+
+submitCmd : Cmd Msg
+submitCmd =
+  Task.perform ( always NoOp ) SubmitWord ( Task.succeed True )

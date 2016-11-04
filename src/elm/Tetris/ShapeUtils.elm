@@ -9,8 +9,8 @@ module Tetris.ShapeUtils exposing (
 
 import Random.Pcg exposing (Seed)
 import Matrix exposing (set, row, col, loc, Location, Matrix)
-import Utils exposing (fromJust, between)
-import Tetris.Models exposing (Model, Shape, Block, newShape, emptyBlock, gameSize)
+import Utils exposing (fromJust)
+import Tetris.Models exposing (Model, Shape, Block, newShape, emptyBlock)
 import Tetris.Utils exposing (randomShapeType, randomShapeBlocks)
 import Tetris.BlockUtils exposing (
   moveBlock,
@@ -20,7 +20,8 @@ import Tetris.BlockUtils exposing (
   getBBox,
   rotateBlock,
   adjustBlocks,
-  inBlocks)
+  inBlocks,
+  isInGame)
 
 -- Model Updaters
 
@@ -138,11 +139,6 @@ shapeCollision oldBlocks newBlocks blocks =
     List.any ( .location >> isInGame >> not ) checkBlocks
     -- Check any blocks below
       || blockCollision checkBlocks blocks
-
-isInGame : Location -> Bool
-isInGame location =
-  row location > gameSize.height
-  || between 0 gameSize.width ( col location )
 
 isAboveGame : Maybe Shape -> Bool
 isAboveGame maybeShape =
