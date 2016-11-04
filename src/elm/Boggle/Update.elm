@@ -3,11 +3,12 @@ module Boggle.Update exposing (update)
 import Char
 import String
 import Task
+import List exposing (member)
 import Boggle.Models exposing (Model)
 import Boggle.Messages exposing (Msg(KeyPress, NewInput, NoOp))
 
-update : Msg -> Model -> (Model, Cmd Msg)
-update msg model =
+update : Msg -> Model -> List String -> (Model, Cmd Msg)
+update msg model dictionary =
   case msg of
     KeyPress code ->
       -- letters
@@ -22,7 +23,15 @@ update msg model =
 
       -- enter
       else if code == 13 then
-        ( model, Cmd.none )
+        let
+          success =
+            String.length model.input > 2
+            && member (String.toLower model.input) dictionary
+        in
+          if success then
+            ( model, Cmd.none )
+          else
+            ( model, Cmd.none )
 
       -- backspace
       else if code == 8 then

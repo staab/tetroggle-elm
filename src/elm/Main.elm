@@ -18,7 +18,7 @@ init flags =
   let
     seed = initialSeed flags.seed
   in
-    ( initialModel seed, Cmd.map TetrisMsg getWindowHeight )
+    ( initialModel seed flags.dictionary , Cmd.map TetrisMsg getWindowHeight )
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -46,7 +46,7 @@ updateTetris msg model =
 updateBoggle : Boggle.Messages.Msg -> Model -> (Model, Cmd Msg)
 updateBoggle msg model =
   let
-    ( updatedBoggle, cmd ) = Boggle.Update.update msg model.boggle
+    ( updatedBoggle, cmd ) = Boggle.Update.update msg model.boggle model.dictionary
     updatedModel = { model | boggle = updatedBoggle }
     updateCmd = Cmd.map BoggleMsg cmd
   in
