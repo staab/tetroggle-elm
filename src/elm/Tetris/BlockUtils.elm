@@ -9,10 +9,11 @@ module Tetris.BlockUtils exposing (
   inBlocks,
   hasLetter,
   stompBlocks,
-  isInGame)
+  isInGame,
+  isBlockType)
 
 import String
-import Matrix exposing (Location, Matrix, flatten, row, col, loc, get)
+import Matrix exposing (Location, Matrix, flatten, row, col, loc, get, set)
 import Utils exposing (fromJust, last, between)
 import Tetris.Models exposing (Block, BlockType(EmptyBlock, SelectedBlock), BBox, gameSize, emptyBlock)
 
@@ -40,6 +41,10 @@ blockCollision list matrix =
 isSameBlock : Block -> Block -> Bool
 isSameBlock block1 block2 =
   block1.location == block2.location
+
+isBlockType : BlockType -> Block -> Bool
+isBlockType blockType block =
+  block.blockType == blockType
 
 inBlocks : List Block -> Block -> Bool
 inBlocks blocks block =
@@ -112,6 +117,25 @@ hasLetter letter block =
     Nothing -> False
     Just blockLetter -> blockLetter == ( letter |> String.fromChar |> String.toUpper)
 
+stompColumnBlock : Int -> Int -> Matrix Block -> Matrix Block
+stompColumnBlock x y blocks =
+  let
+    newLocation = ( loc y x )
+    maybeAboveBlock = Matrix.get (loc ( y - 1 ) x) blocks
+    aboveBlock =
+      case maybeAboveBlock of
+        Nothing -> emptyBlock newLocation
+        Just block -> block
+  in
+    set newLocation aboveBlock blocks
+
+stompColumn : Matrix Block -> Location -> Matrix Block
+stompColumn blocks location =
+  List.foldl
+    ( stompColumnBlock ( col location ) )
+    blocks
+    ( List.reverse [0..(row location)] )
+
 stompBlock : Matrix Block -> Block -> Matrix Block
 stompBlock blocks block =
   let
@@ -126,15 +150,19 @@ stompBlock blocks block =
         case belowBlock.blockType of
           EmptyBlock ->
             if isInGame belowLocation then
-              blocks
-                |> Matrix.set block.location emptyBlock
-                |> Matrix.set belowBlock.location block
+              stompColumn blocks block.location
             else
               blocks
 
           _ ->
             blocks
 
-stompBlocks : Matrix Block -> Matrix Block
-stompBlocks blocks =
-  Matrix.map ( stompBlock blocks ) blocks
+stompBlocks : List Block -> Matrix Block -> Matrix Block
+stompBlocks selections blocks =
+  List.foldl
+    (\selection blocks -> stompBlock blocks selection )
+    blocks
+    -- Start at the bottom
+    ( List.sortBy
+        (\selection -> gameSize.height - row selection.location)
+        selections )

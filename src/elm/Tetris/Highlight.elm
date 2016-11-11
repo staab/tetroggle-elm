@@ -10,7 +10,7 @@ import Tetris.Models exposing (
   Shape,
   Block,
   BlockType(EmptyBlock, FullBlock, SelectedBlock))
-import Tetris.BlockUtils exposing (inBlocks, hasLetter, stompBlocks)
+import Tetris.BlockUtils exposing (inBlocks, hasLetter, stompBlocks, isBlockType)
 import Tetris.ShapeUtils exposing (blockInShape)
 
 
@@ -30,9 +30,12 @@ updateHighlight model word =
 removeHighlighted : Model -> Model
 removeHighlighted model =
   let
+    selections = List.filter
+      ( isBlockType SelectedBlock )
+      ( Matrix.flatten model.blocks )
     blocks = model.blocks
       |> Matrix.map removeHighlightedBlock
-      |> stompBlocks
+      |> stompBlocks selections
   in
     { model | blocks = blocks }
 
