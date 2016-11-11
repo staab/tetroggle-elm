@@ -134,6 +134,7 @@ stompColumn blocks location =
   List.foldl
     ( stompColumnBlock ( col location ) )
     blocks
+    -- Start at bottom
     ( List.reverse [0..(row location)] )
 
 stompBlock : Matrix Block -> Block -> Matrix Block

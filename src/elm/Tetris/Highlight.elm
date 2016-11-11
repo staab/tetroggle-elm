@@ -23,7 +23,8 @@ updateHighlight model word =
       |> Matrix.flatten
       |> List.filter ( canHighlight model.shape )
       |> findWord ( String.toUpper word )
-      |> List.concatMap identity
+      |> List.head
+      |> Maybe.withDefault []
   in
     { model | blocks = Matrix.map ( highlightBlock selection ) blocks }
 
