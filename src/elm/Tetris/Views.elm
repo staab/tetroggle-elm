@@ -32,7 +32,8 @@ blockDiv height block =
     span [ class ( blockClass block )
          , style [ ( "width", px size )
                  , ( "height", px size )
-                 , ( "font-size", px ( size * 0.85 ) )
+                 , ( "font-size", fontSize size block )
+                 , ( "line-height", px size )
                  ]
          ]
          [ text ( Maybe.withDefault "" block.letter ) ]
@@ -48,6 +49,13 @@ blockClass block =
 
     EmptyBlock ->
       "tetris-block"
+
+fontSize : Float -> Block -> String
+fontSize size block =
+  if block.letter == Just "QU" then
+    px (size * 0.65)
+  else
+    px (size * 0.85)
 
 px : Float -> String
 px value =
