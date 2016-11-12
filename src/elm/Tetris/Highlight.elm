@@ -34,9 +34,7 @@ removeHighlighted model =
     selections = List.filter
       ( isBlockType SelectedBlock )
       ( Matrix.flatten model.blocks )
-    blocks = model.blocks
-      |> Matrix.map removeHighlightedBlock
-      |> stompBlocks selections
+    blocks = stompBlocks selections model.blocks
   in
     { model | blocks = blocks }
 
@@ -101,15 +99,6 @@ unhighlightBlock : Block -> Block
 unhighlightBlock block =
   if block.blockType == SelectedBlock then
     { block | blockType = FullBlock }
-  else
-    block
-
-removeHighlightedBlock : Block -> Block
-removeHighlightedBlock block =
-  if block.blockType == SelectedBlock then
-    { block |
-      blockType = EmptyBlock
-    , letter = Nothing }
   else
     block
 

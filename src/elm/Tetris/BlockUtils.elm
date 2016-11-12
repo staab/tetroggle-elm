@@ -42,6 +42,16 @@ isSameBlock : Block -> Block -> Bool
 isSameBlock block1 block2 =
   block1.location == block2.location
 
+colEquals : Block -> Block -> Bool
+colEquals block1 block2 =
+  (col block1.location) == (col block2.location)
+
+inColumn : Int -> Int -> Int -> Block -> Bool
+inColumn column start end block =
+  (col block.location) == column
+  && (row block.location) <= start
+  && (row block.location) >= end
+
 isBlockType : BlockType -> Block -> Bool
 isBlockType blockType block =
   block.blockType == blockType
@@ -117,53 +127,39 @@ hasLetter letter block =
     Nothing -> False
     Just blockLetter -> blockLetter == ( letter |> String.fromChar |> String.toUpper)
 
-stompColumnBlock : Int -> Int -> Matrix Block -> Matrix Block
-stompColumnBlock x y blocks =
+stompSelection : Block -> Matrix Block -> Matrix Block
+stompSelection selection blocks =
+  -- For each blocks above or equal with the selection
+  -- and below the first empty block or the top of the game, copy the block above
+  -- to its place, except the last one, which will be empty
   let
-    newLocation = ( loc y x )
-    maybeAboveBlock = Matrix.get (loc ( y - 1 ) x) blocks
-    aboveBlock =
-      case maybeAboveBlock of
-        Nothing -> emptyBlock newLocation
-        Just block -> block
+    column = col selection.location
+    start = row selection.location
+    end = blocks
+      |> flatten
+      |> List.filter (colEquals selection)
+      |> List.take start
+      |> List.filterMap
+        (\block ->
+          if block.blockType == EmptyBlock then
+            Just ((row block.location) + 1)
+          else Nothing)
+      |> last
+      |> Maybe.withDefault 0
   in
-    set newLocation aboveBlock blocks
-
-stompColumn : Matrix Block -> Location -> Matrix Block
-stompColumn blocks location =
-  List.foldl
-    ( stompColumnBlock ( col location ) )
-    blocks
-    -- Start at bottom
-    ( List.reverse [0..(row location)] )
-
-stompBlock : Matrix Block -> Block -> Matrix Block
-stompBlock blocks block =
-  let
-    belowLocation = loc ( ( row block.location ) + 1 ) ( col block.location )
-    maybeBelowBlock = Matrix.get belowLocation blocks
-  in
-    case maybeBelowBlock of
-      Nothing ->
-        blocks
-
-      Just belowBlock ->
-        case belowBlock.blockType of
-          EmptyBlock ->
-            if isInGame belowLocation then
-              stompColumn blocks block.location
-            else
-              blocks
-
-          _ ->
-            blocks
+    Matrix.map
+      (\block ->
+        if inColumn column start end block then
+          let
+            maybeAboveBlock = Matrix.get (loc ((row block.location) - 1) column) blocks
+          in
+            case maybeAboveBlock of
+              Nothing -> emptyBlock (loc 0 column)
+              Just aboveBlock -> { aboveBlock | location = block.location }
+        else
+          block)
+      blocks
 
 stompBlocks : List Block -> Matrix Block -> Matrix Block
 stompBlocks selections blocks =
-  List.foldl
-    (\selection blocks -> stompBlock blocks selection )
-    blocks
-    -- Start at the bottom
-    ( List.sortBy
-        (\selection -> gameSize.height - row selection.location)
-        selections )
+  List.foldl stompSelection blocks selections
