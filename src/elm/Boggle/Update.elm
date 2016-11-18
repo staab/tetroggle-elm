@@ -5,7 +5,12 @@ import String
 import Task
 import List exposing (member)
 import Boggle.Models exposing (Model)
-import Boggle.Messages exposing (Msg(KeyPress, NewInput, SubmitWord, NoOp))
+import Boggle.Messages exposing (Msg(
+  KeyPress,
+  NewInput,
+  SubmitWord,
+  TogglePaused,
+  NoOp))
 
 update : Msg -> Model -> List String -> (Model, Cmd Msg)
 update msg model dictionary =
@@ -46,6 +51,9 @@ update msg model dictionary =
 
     SubmitWord success ->
       ( { model | input = "" }, Cmd.none )
+
+    TogglePaused ->
+      ( { model | paused = not model.paused }, Cmd.none )
 
     NoOp ->
       (model, Cmd.none)

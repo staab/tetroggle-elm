@@ -27,10 +27,16 @@ update msg model =
       ( model, Cmd.none )
 
     TetrisMsg subMsg ->
-      updateTetris subMsg model
+      if model.boggle.paused then
+        ( model, Cmd.none )
+      else
+        updateTetris subMsg model
 
     BoggleMsg subMsg ->
-      updateBoggle subMsg model
+      --if model.boggle.paused && subMsg /= Boggle.Messages.TogglePaused then
+      --  ( model, Cmd.none )
+      --else
+        updateBoggle subMsg model
 
 updateTetris : Tetris.Messages.Msg -> Model -> (Model, Cmd Msg)
 updateTetris msg model =

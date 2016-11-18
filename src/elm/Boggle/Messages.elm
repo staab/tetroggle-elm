@@ -6,4 +6,5 @@ type Msg
   = KeyPress KeyCode
   | NewInput String
   | SubmitWord Bool
+  | TogglePaused
   | NoOp
