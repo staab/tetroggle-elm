@@ -4,7 +4,6 @@ import String
 import Matrix
 import Maybe
 import Matrix exposing (row, col)
-import Utils exposing (fromJust, last)
 import Tetris.Models
     exposing
         ( Model
@@ -16,6 +15,20 @@ import Tetris.BlockUtils exposing (inBlocks, hasLetter, stompBlocks, isBlockType
 import Tetris.ShapeUtils exposing (blockInShape)
 
 
+-- Wierd type definition, see
+-- https://github.com/elm-lang/elm-compiler/blob/0.17.1/hints/recursive-alias.md
+
+
+type alias Selection =
+    { block : Block
+    , next : NextSelections
+    }
+
+
+type NextSelections
+    = NextSelections (List Selection)
+
+
 updateSelect : Model -> String -> Model
 updateSelect model word =
     let
@@ -23,15 +36,13 @@ updateSelect model word =
         blocks =
             Matrix.map unselectBlock model.blocks
 
-        selection =
+        selectedBlocks =
             blocks
                 |> Matrix.flatten
                 |> List.filter (canSelect model.shape)
                 |> findWord (String.toUpper word)
-                |> List.head
-                |> Maybe.withDefault []
     in
-        { model | blocks = Matrix.map (selectBlock selection) blocks }
+        { model | blocks = Matrix.map (selectBlock selectedBlocks) blocks }
 
 
 removeSelected : Model -> Model
@@ -73,29 +84,122 @@ unselectBlock block =
 -- Word tracing
 
 
-findWord : String -> List Block -> List (List Block)
+splitWord : String -> Maybe ( String, String )
+splitWord word =
+    let
+        uncons w =
+            let
+                parts =
+                    w |> String.toUpper |> String.uncons
+            in
+                case parts of
+                    Nothing ->
+                        Nothing
+
+                    Just ( head, tail ) ->
+                        Just ( String.fromChar head, tail )
+
+        parts1 =
+            uncons word
+    in
+        case parts1 of
+            Nothing ->
+                Nothing
+
+            Just ( head1, tail1 ) ->
+                if head1 == "Q" then
+                    let
+                        parts2 =
+                            uncons tail1
+                    in
+                        case parts2 of
+                            Nothing ->
+                                Nothing
+
+                            Just ( head2, tail2 ) ->
+                                if head2 == "U" then
+                                    Just ( head1 ++ head2, tail2 )
+                                else
+                                    Just ( head1, tail1 )
+                else
+                    Just ( head1, tail1 )
+
+
+flattenSelection : List Block -> Selection -> List Block
+flattenSelection current selection =
+    let
+        (NextSelections unwrappedNext) =
+            selection.next
+
+        maybeNext =
+            List.head unwrappedNext
+
+        result =
+            current ++ [ selection.block ]
+    in
+        case maybeNext of
+            Nothing ->
+                result
+
+            Just next ->
+                flattenSelection result next
+
+
+findWord : String -> List Block -> List Block
 findWord word allBlocks =
     let
         parts =
-            String.uncons word
+            splitWord word
     in
         case parts of
             Nothing ->
                 []
 
             Just ( letter, tail ) ->
-                allBlocks
-                    |> List.filter (hasLetter letter)
-                    |> List.map (\block -> [ block ])
-                    |> List.map (traceWordPath tail allBlocks)
-                    |> List.filterMap identity
+                let
+                    maybeselection =
+                        allBlocks
+                            |> List.filter (hasLetter letter)
+                            |> List.map (traceWordPath tail allBlocks)
+                            |> List.filterMap identity
+                            |> List.head
+                in
+                    case maybeselection of
+                        Nothing ->
+                            []
+
+                        Just selection ->
+                            flattenSelection [] selection
 
 
-traceWordPath : String -> List Block -> List Block -> Maybe (List Block)
-traceWordPath word allBlocks selection =
+traceWordPath : String -> List Block -> Block -> Maybe Selection
+traceWordPath word selectable start =
     let
         parts =
-            String.uncons word
+            splitWord word
+
+        selectable =
+            List.filter (\block -> block /= start) selectable
+
+        selection =
+            { block = start, next = NextSelections [] }
+
+        recur : String -> List Block -> Selection
+        recur tail nextBlocks =
+            { selection
+                | next =
+                    NextSelections
+                        (nextBlocks
+                            |> List.map
+                                (\nextBlock ->
+                                    traceWordPath
+                                        tail
+                                        selectable
+                                        nextBlock
+                                )
+                            |> List.filterMap identity
+                        )
+            }
     in
         case parts of
             Nothing ->
@@ -103,35 +207,19 @@ traceWordPath word allBlocks selection =
 
             Just ( letter, tail ) ->
                 let
-                    maybeResult =
-                        addToSelection allBlocks letter selection
+                    nextBlocks =
+                        getNext selectable letter start
                 in
-                    case maybeResult of
-                        Nothing ->
-                            Nothing
-
-                        Just result ->
-                            if String.isEmpty tail then
-                                Just result
-                            else
-                                traceWordPath tail allBlocks result
+                    if List.isEmpty nextBlocks then
+                        Nothing
+                    else
+                        Just (recur tail nextBlocks)
 
 
-addToSelection : List Block -> Char -> List Block -> Maybe (List Block)
-addToSelection allBlocks letter selection =
-    let
-        maybeNeighbor =
-            getNeighbors (fromJust (last selection)) allBlocks
-                |> List.filter (hasLetter letter)
-                |> List.filter (\block -> List.member block selection |> not)
-                |> List.head
-    in
-        case maybeNeighbor of
-            Nothing ->
-                Nothing
-
-            Just neighbor ->
-                Just (selection ++ [ neighbor ])
+getNext : List Block -> String -> Block -> List Block
+getNext selectable letter around =
+    getNeighbors around selectable
+        |> List.filter (hasLetter letter)
 
 
 getNeighbors : Block -> List Block -> List Block
