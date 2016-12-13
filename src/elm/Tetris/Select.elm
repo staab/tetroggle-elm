@@ -184,22 +184,21 @@ traceWordPath word selectable start =
         selection =
             { block = start, next = NextSelections [] }
 
-        recur : String -> List Block -> Selection
+        recur : String -> List Block -> Maybe Selection
         recur tail nextBlocks =
-            { selection
-                | next =
-                    NextSelections
-                        (nextBlocks
-                            |> List.map
-                                (\nextBlock ->
-                                    traceWordPath
-                                        tail
-                                        selectable
-                                        nextBlock
-                                )
-                            |> List.filterMap identity
-                        )
-            }
+            let
+                next =
+                    nextBlocks
+                        |> List.map
+                            (\nextBlock ->
+                                traceWordPath tail selectable nextBlock
+                            )
+                        |> List.filterMap identity
+            in
+                if List.isEmpty next then
+                    Nothing
+                else
+                    Just { selection | next = NextSelections next }
     in
         case parts of
             Nothing ->
@@ -213,7 +212,7 @@ traceWordPath word selectable start =
                     if List.isEmpty nextBlocks then
                         Nothing
                     else
-                        Just (recur tail nextBlocks)
+                        recur tail nextBlocks
 
 
 getNext : List Block -> String -> Block -> List Block
