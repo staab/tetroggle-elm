@@ -1,5 +1,3 @@
-- There's a bug with tracing paths because we're just grabbing the first matching neighbor and chaining off of that, rather than grabbing all matching neighbors and creating a tree of results.
-- Handle Qu's
 - Refactor existing code into a more sensible structure. 
     + Make the game a single module.
     + Make blocks a list, and keep shape blocks out of it. Matrixify when necessary.

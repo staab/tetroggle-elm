@@ -8,4 +8,5 @@ var Elm = require( '../elm/Main' );
 Elm.Main.embed(document.getElementById('main'), {
   seed: Math.floor(Math.random()*0xFFFFFFFF),
   dictionary: require('raw!./dictionary.txt'),
+  startTime: (new Date()).getTime(),
 })

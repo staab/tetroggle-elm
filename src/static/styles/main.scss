@@ -1,8 +1,10 @@
-// $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
-// @import '~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss';
-// @import '~bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+
+button {
+
+}
 
 .wrapper {
+  @import url('https://fonts.googleapis.com/css?family=Lobster');
   position: absolute;
   top: 0;
   right: 0;
@@ -10,6 +12,71 @@
   left: 0;
   display: flex;
   justify-content: center;
+  font-family: helvetica;
+}
+
+.overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: white;
+  opacity: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .overlay-animation {
+    position: relative;
+    width: 100%;
+    font-size: 48px;
+    font-family: 'Lobster', cursive;
+    text-transform: uppercase;
+
+    // Animating elements
+
+    .overlay-boggle,
+    .overlay-tetris {
+      transition: left 3s, right 3s, opacity 2.5s;
+      position: absolute;
+      font-size: 48px;
+      top: 0;
+    }
+
+    .overlay-boggle {
+      right: 75%;
+      opacity: 1;
+    }
+
+    .overlay-tetris {
+      left: 75%;
+      opacity: 1;
+    }
+
+    // Centered elements
+
+    .overlay-plus,
+    .overlay-tetroggle,
+    .overlay-start {
+      transition: opacity 2.5s;
+      text-align: center;
+      font-size: 72px;
+      margin-top: -16px;
+    }
+
+    .overlay-plus {
+      opacity: 1;
+    }
+
+    .overlay-tetroggle {
+      opacity: 0;
+      margin-top: -88px;
+    }
+
+    .overlay-start {
+      opacity: 0;
+    }
+  }
+
 }
 
 .content {
