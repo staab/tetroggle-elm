@@ -1,6 +1,6 @@
 module Boggle.Views exposing (leftSidebar, rightSidebar)
 
-import Html exposing (Html, div, text, button)
+import Html exposing (Html, div, text, i, button)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Boggle.Messages exposing (Msg(TogglePaused))
@@ -11,7 +11,12 @@ leftSidebar : Model -> Html Msg
 leftSidebar model =
     div
         [ class "left-sidebar" ]
-        [ div [] [ button [ onClick TogglePaused ] [ text "Pause" ] ]
+        [ div
+            []
+            [ i
+                [ onClick TogglePaused, class "fa fa-btn fa-2x fa-pause" ]
+                []
+            ]
         ]
 
 

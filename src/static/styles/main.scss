@@ -1,6 +1,35 @@
+$c-bg: #0f8b8d;
+$c-text: #143642;
+$c-primary: #dad2d8;
+$c-secondary: #ec9a29;
+$c-tertiary: #a8201a;
+
+$c-bg-hover: darken($c-bg, 10%);
+$c-text-hover: darken($c-text, 10%);
+$c-primary-hover: darken($c-primary, 10%);
+$c-secondary-hover: darken($c-secondary, 10%);
+$c-tertiary-hover: darken($c-tertiary, 10%);
 
 button {
+  border-radius: 5px;
+  border: 0px;
+  padding: 10px;
+  background: $c-text;
+  color: $c-primary;
+  cursor: pointer;
 
+  &:hover {
+    background: $c-text-hover;
+  }
+}
+
+.fa-btn {
+  cursor: pointer;
+  color: $c-text;
+
+  &:hover {
+    color: $c-text-hover;
+  }
 }
 
 .wrapper {
@@ -10,20 +39,21 @@ button {
   right: 0;
   bottom: 0;
   left: 0;
+  color: $c-text;
 }
 
 .inner-wrapper {
   display: flex;
   justify-content: center;
   font-family: helvetica;
-  background-color: white;
+  background-color: $c-bg;
 }
 
 .overlay {
   position: absolute;
   height: 100%;
   width: 100%;
-  background: white;
+  background: $c-bg;
   opacity: 1;
   display: flex;
   justify-content: center;
@@ -84,30 +114,33 @@ button {
 
 .left-sidebar,
 .right-sidebar {
-  flex-basis: 30%;
+  flex-basis: 20%;
   display: flex;
   padding: 20px;
 }
 
-.left-sidebar {
-  justify-content: flex-end;
+.left-sidebar,
+.right-sidebar {
+  justify-content: center;
 }
 
-// .right-sidebar {
-//   align-items:
-// }
+.tetris-wrapper {
+  background: $c-text;
+  border-left: 10px solid;
+  border-right: 10px solid;
 
-.tetris-block {
-  float: left;
-  text-align: center;
-  margin: 1px;
-  background-color: white;
+  .tetris-block {
+    float: left;
+    text-align: center;
+    margin: 1px;
 
-  &.full-block {
-    background-color: #ddf;
-  }
+    &.full-block {
+      background-color: $c-primary;
+    }
 
-  &.selected-block {
-    background-color: #fde;
+    &.selected-block {
+      background-color: $c-secondary;
+    }
   }
 }
+
