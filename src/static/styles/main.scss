@@ -42,13 +42,6 @@ button {
   color: $c-text;
 }
 
-.inner-wrapper {
-  display: flex;
-  justify-content: center;
-  font-family: helvetica;
-  background-color: $c-bg;
-}
-
 .overlay {
   position: absolute;
   height: 100%;
@@ -112,35 +105,41 @@ button {
   }
 }
 
-.left-sidebar,
-.right-sidebar {
-  flex-basis: 20%;
+.inner-wrapper {
   display: flex;
-  padding: 20px;
-}
-
-.left-sidebar,
-.right-sidebar {
   justify-content: center;
-}
+  font-family: helvetica;
+  background-color: $c-bg;
 
-.tetris-wrapper {
-  background: $c-text;
-  border-left: 10px solid;
-  border-right: 10px solid;
+  .left-sidebar,
+  .right-sidebar {
+    flex-basis: 20%;
+    display: flex;
+    padding: 20px;
+  }
 
-  .tetris-block {
-    float: left;
-    text-align: center;
-    margin: 1px;
+  .left-sidebar,
+  .right-sidebar {
+    justify-content: center;
+  }
 
-    &.full-block {
-      background-color: $c-primary;
-    }
+  .tetris-wrapper {
+    background: $c-text;
+    border-left: 10px solid;
+    border-right: 10px solid;
 
-    &.selected-block {
-      background-color: $c-secondary;
+    .tetris-block {
+      float: left;
+      text-align: center;
+      margin: 1px;
+
+      &.full-block {
+        background-color: $c-primary;
+      }
+
+      &.selected-block {
+        background-color: $c-secondary;
+      }
     }
   }
 }
-
