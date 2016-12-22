@@ -46,7 +46,7 @@ update msg model =
                     | boggle = { boggle | paused = False }
                     , tetris = { tetris | gameStarted = True }
                   }
-                , Cmd.none
+                , Cmd.map TetrisMsg getWindowHeight
                 )
 
         TetrisMsg subMsg ->

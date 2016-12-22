@@ -10,9 +10,13 @@ button {
   right: 0;
   bottom: 0;
   left: 0;
+}
+
+.inner-wrapper {
   display: flex;
   justify-content: center;
   font-family: helvetica;
+  background-color: white;
 }
 
 .overlay {
@@ -76,17 +80,22 @@ button {
       opacity: 0;
     }
   }
-
 }
 
-.content {
-  margin: 0 auto;
+.left-sidebar,
+.right-sidebar {
+  flex-basis: 30%;
+  display: flex;
+  padding: 20px;
 }
 
-.tetris-wrapper {
-  height: 100%;
-  width: 100%;
+.left-sidebar {
+  justify-content: flex-end;
 }
+
+// .right-sidebar {
+//   align-items:
+// }
 
 .tetris-block {
   float: left;

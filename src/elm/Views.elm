@@ -14,10 +14,11 @@ view : Model -> Html Msg
 view model =
     div [ class "wrapper" ]
         [ overlay model
-        , div [ class "input-sidebar" ]
-            [ Html.App.map BoggleMsg (Boggle.Views.view model.boggle) ]
-        , div [ class "container" ]
-            [ Html.App.map TetrisMsg (Tetris.Views.view model.tetris) ]
+        , div [ class "inner-wrapper" ]
+            [ Html.App.map BoggleMsg (Boggle.Views.leftSidebar model.boggle)
+            , Html.App.map TetrisMsg (Tetris.Views.view model.tetris)
+            , Html.App.map BoggleMsg (Boggle.Views.rightSidebar model.boggle)
+            ]
         ]
 
 
