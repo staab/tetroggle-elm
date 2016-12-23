@@ -1,3 +1,6 @@
+- question mark for help overlay
+- animate submit success/failure
+
 - Refactor existing code into a more sensible structure. 
     + Make the game a single module.
     + Make blocks a list, and keep shape blocks out of it. Matrixify when necessary.
@@ -20,7 +23,6 @@
     + Blocks that you can collect that populate a power-up thing in the sidebar. When you click the power up, you can remove a block you don't want.
     + 
 - Lock down some effects so that people have to buy them
-- Add ui
 - Add menus
     + Help with a key to the various effects
     + Stats

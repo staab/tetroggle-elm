@@ -14,35 +14,23 @@ window.firebase.initializeApp({
 var db = window.firebase.database();
 var scores = db.ref('scores');
 
-function objToArray(obj) {
-  var result = [];
-
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      result.push(obj[key]);
-    }
-  }
-
-  return result;
-}
-
-function addScore(elapsed, name, score) {
-  return scores.push({
-    elapsed: elapsed,
-    name: name,
-    score: score
-  });
+function addScore(score) {
+  return scores.push(score);
 }
 
 function getScores() {
   return scores
-    .orderByChild('score')
     .limitToLast(50)
+    .orderByChild('score')
     .once('value')
     .then(function (snapshot) {
-      var data = objToArray(snapshot.val());
+      var data = []
 
-      return data;
+      snapshot.forEach(function (score) {
+        data.push(score.val());
+      });
+
+      return data.reverse();
     });
 }
 
@@ -51,8 +39,17 @@ window.getScores = getScores
 
 // inject bundled Elm app into div#main
 var Elm = require( '../elm/Main' );
-Elm.Main.embed(document.getElementById('main'), {
+
+var app = Elm.Main.fullscreen({
   seed: Math.floor(Math.random()*0xFFFFFFFF),
   dictionary: require('raw!./dictionary.txt'),
   startTime: (new Date()).getTime(),
+})
+
+app.ports.addScore.subscribe(function (score) {
+  addScore(score)
+    .then(getScores)
+    .then(function (scores) {
+      app.ports.scores.send(scores);
+    })
 })

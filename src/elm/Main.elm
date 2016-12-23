@@ -3,9 +3,32 @@ module Main exposing (..)
 import Html.App as Html
 import String exposing (lines)
 import Random.Pcg exposing (initialSeed)
-import Models exposing (Flags, Model, initialModel)
+import Models
+    exposing
+        ( Flags
+        , Model
+        , initialModel
+        , ScoreBoardStatus
+            ( Prompt
+            , Submitted
+            , Submitting
+            )
+        )
 import Views exposing (view)
-import Messages exposing (Msg(NoOp, TetrisMsg, BoggleMsg, Tick, StartGame))
+import Ports exposing (addScore)
+import Messages
+    exposing
+        ( Msg
+            ( NoOp
+            , TetrisMsg
+            , BoggleMsg
+            , Tick
+            , SetName
+            , SetScores
+            , StartGame
+            , SetScoreBoardStatus
+            )
+        )
 import Subscriptions exposing (subscriptions)
 import Tetris.Commands exposing (getWindowHeight)
 import Tetris.Update
@@ -35,6 +58,9 @@ update msg model =
         Tick time ->
             ( { model | elapsed = time - model.startTime }, Cmd.none )
 
+        SetName name ->
+            ( { model | name = name }, Cmd.none )
+
         StartGame ->
             let
                 newModel =
@@ -49,9 +75,34 @@ update msg model =
                 ( { model
                     | boggle = { boggle | paused = False }
                     , tetris = { tetris | gameStarted = True }
+                    , scoreBoardStatus = Prompt
                   }
                 , Cmd.map TetrisMsg getWindowHeight
                 )
+
+        SetScoreBoardStatus status ->
+            let
+                cmd =
+                    case status of
+                        Submitting ->
+                            addScore
+                                { elapsed = truncate model.elapsed
+                                , score = model.boggle.score
+                                , name = model.name
+                                }
+
+                        _ ->
+                            Cmd.none
+            in
+                ( { model | scoreBoardStatus = status }, cmd )
+
+        SetScores scores ->
+            ( { model
+                | scores = scores
+                , scoreBoardStatus = Submitted
+              }
+            , Cmd.none
+            )
 
         TetrisMsg subMsg ->
             if model.boggle.paused then

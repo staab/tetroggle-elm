@@ -5,6 +5,20 @@ import Tetris.Models
 import Boggle.Models
 
 
+type alias Score =
+    { elapsed : Int
+    , score : Int
+    , name : String
+    }
+
+
+type ScoreBoardStatus
+    = Prompt
+    | Unsubmitted
+    | Submitting
+    | Submitted
+
+
 type alias Flags =
     { seed : Int
     , dictionary : String
@@ -19,6 +33,9 @@ type alias Model =
     , dictionary : List String
     , elapsed : Float
     , startTime : Float
+    , scoreBoardStatus : ScoreBoardStatus
+    , name : String
+    , scores : List Score
     }
 
 
@@ -30,4 +47,7 @@ initialModel seed dictionary startTime =
     , dictionary = dictionary
     , elapsed = 0.0
     , startTime = startTime
+    , scoreBoardStatus = Prompt
+    , name = "Anonymous"
+    , scores = []
     }
