@@ -1,7 +1,7 @@
 module Boggle.Views exposing (leftSidebar, rightSidebar)
 
-import Html exposing (Html, div, text, strong, i, button)
-import Html.Attributes exposing (class)
+import Html exposing (Html, div, span, text, strong, i, a, button)
+import Html.Attributes exposing (class, href, target, style)
 import Html.Events exposing (onClick)
 import Boggle.Messages exposing (Msg(TogglePaused))
 import Boggle.Models exposing (Model)
@@ -13,10 +13,27 @@ leftSidebar model =
         [ class "left-sidebar" ]
         [ div [ class "current-score" ] [ text ("Score: " ++ (toString model.score)) ]
         , div
-            []
-            [ i
-                [ onClick TogglePaused, class "fa fa-btn fa-2x fa-pause" ]
-                []
+            [ style [ ( "display", "inline-block" ) ] ]
+            [ div
+                [ style
+                    [ ( "display", "flex" )
+                    , ( "flex-direction", "column" )
+                    , ( "align-items", "center" )
+                    , ( "justify-content", "space-around" )
+                    , ( "height", "100px" )
+                    ]
+                ]
+                [ i
+                    [ onClick TogglePaused, class "fa fa-btn fa-2x fa-pause" ]
+                    []
+                , a
+                    [ href "https://cash.me/$jstaab"
+                    , target "_blank"
+                    , onClick TogglePaused
+                    ]
+                    [ i [ class "fa fa-btn fa-2x fa-heart" ] []
+                    ]
+                ]
             ]
         ]
 
