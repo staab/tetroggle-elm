@@ -5,6 +5,7 @@ type alias Model =
     { input : String
     , pastWords : List String
     , paused : Bool
+    , score : Int
     }
 
 
@@ -13,4 +14,5 @@ initialModel =
     { input = ""
     , pastWords = []
     , paused = True
+    , score = 0
     }

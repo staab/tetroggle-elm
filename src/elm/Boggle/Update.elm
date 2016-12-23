@@ -21,8 +21,8 @@ update : Msg -> Model -> List String -> ( Model, Cmd Msg )
 update msg model dictionary =
     case msg of
         KeyPress code ->
-            -- letters
             if code >= 65 && code <= 90 then
+                -- letters
                 let
                     input =
                         code
@@ -31,8 +31,8 @@ update msg model dictionary =
                             |> (++) model.input
                 in
                     ( model, inputCmd input )
-                -- enter
             else if code == 13 then
+                -- enter
                 let
                     success =
                         String.length model.input
@@ -46,12 +46,15 @@ update msg model dictionary =
                             Cmd.none
                 in
                     ( model, cmd )
-                -- backspace
             else if code == 8 then
+                -- backspace
                 if String.isEmpty model.input then
                     ( model, Cmd.none )
                 else
                     ( model, inputCmd (String.dropRight 1 model.input) )
+            else if code == 27 then
+                -- escape
+                ( model, inputCmd "" )
             else
                 ( model, Cmd.none )
 
@@ -61,7 +64,8 @@ update msg model dictionary =
         SubmitWord success ->
             ( { model
                 | input = ""
-                , pastWords = List.append [ model.input ] model.pastWords
+                , pastWords = List.append [ model.input ] model.pastWords |> List.take 50
+                , score = model.score + (getScore model.input)
               }
             , Cmd.none
             )
@@ -71,6 +75,29 @@ update msg model dictionary =
 
         NoOp ->
             ( model, Cmd.none )
+
+
+getScore : String -> Int
+getScore input =
+    let
+        len =
+            String.length input
+    in
+        case len of
+            5 ->
+                2
+
+            6 ->
+                3
+
+            7 ->
+                5
+
+            8 ->
+                11
+
+            _ ->
+                1
 
 
 inputCmd : String -> Cmd Msg

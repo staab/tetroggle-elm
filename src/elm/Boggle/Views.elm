@@ -11,7 +11,7 @@ leftSidebar : Model -> Html Msg
 leftSidebar model =
     div
         [ class "left-sidebar" ]
-        [ div [ class "current-score" ] [ text "Score: 110" ]
+        [ div [ class "current-score" ] [ text ("Score: " ++ (toString model.score)) ]
         , div
             []
             [ i
