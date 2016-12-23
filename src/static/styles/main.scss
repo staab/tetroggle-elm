@@ -1,3 +1,13 @@
+$z-layers: (
+  "default": 1,
+  "game": 2,
+  "overlay": 3
+);
+
+@function z($layer) {
+  @return map-get($z-layers, $layer);
+}
+
 $c-bg: #0f8b8d;
 $c-text: #143642;
 $c-primary: #dad2d8;
@@ -34,6 +44,7 @@ button {
 
 .wrapper {
   @import url('https://fonts.googleapis.com/css?family=Lobster');
+  @import url('https://fonts.googleapis.com/css?family=Cabin+Sketch');
   position: absolute;
   top: 0;
   right: 0;
@@ -43,6 +54,7 @@ button {
 }
 
 .overlay {
+  z-index: z("overlay");
   position: absolute;
   height: 100%;
   width: 100%;
@@ -106,24 +118,45 @@ button {
 }
 
 .inner-wrapper {
-  display: flex;
-  justify-content: center;
-  font-family: helvetica;
+  z-index: z("game");
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  font-family: 'Cabin Sketch';
   background-color: $c-bg;
+  overflow-y: hidden;
 
   .left-sidebar,
   .right-sidebar {
-    flex-basis: 20%;
-    display: flex;
+    position: absolute;
     padding: 20px;
   }
 
-  .left-sidebar,
+  .left-sidebar {
+    .current-score {
+      font-size: 2em;
+    }
+  }
+
   .right-sidebar {
-    justify-content: center;
+    top: 0;
+    right: 0;
+
+    .current-selection {
+      color: $c-tertiary;
+      font-size: 2em;
+    }
+
+    .past-words {
+      text-align: right;
+    }
   }
 
   .tetris-wrapper {
+    margin: 0 auto;
+    height: 100%;
     background: $c-text;
     border-left: 10px solid;
     border-right: 10px solid;

@@ -17,34 +17,34 @@ import Tetris.Models
 
 view : Model -> Html a
 view model =
-    div
-        [ class "tetris-wrapper" ]
-        (Array.map (blockRow model.windowHeight) model.blocks |> Array.toList)
+    let
+        rowWidth =
+            (divide model.windowHeight gameSize.height) * (toFloat gameSize.width)
+    in
+        div
+            [ class "tetris-wrapper", style [ ( "width", px rowWidth ) ] ]
+            (Array.map (blockRow rowWidth) model.blocks |> Array.toList)
 
 
-blockRow : Int -> Array Block -> Html a
-blockRow height blocks =
+blockRow : Float -> Array Block -> Html a
+blockRow rowWidth blocks =
     div
         [ class "tetris-row" ]
-        (Array.map (blockDiv height) blocks |> Array.toList)
+        (Array.map (blockDiv ((rowWidth / (toFloat gameSize.width)) - 2)) blocks |> Array.toList)
 
 
-blockDiv : Int -> Block -> Html a
-blockDiv height block =
-    let
-        size =
-            (divide height gameSize.height) - 2
-    in
-        span
-            [ class (blockClass block)
-            , style
-                [ ( "width", px size )
-                , ( "height", px size )
-                , ( "font-size", fontSize size block )
-                , ( "line-height", px size )
-                ]
+blockDiv : Float -> Block -> Html a
+blockDiv width block =
+    span
+        [ class (blockClass block)
+        , style
+            [ ( "width", px width )
+            , ( "height", px width )
+            , ( "font-size", fontSize width block )
+            , ( "line-height", px width )
             ]
-            [ text (Maybe.withDefault "" block.letter) ]
+        ]
+        [ text (Maybe.withDefault "" block.letter) ]
 
 
 blockClass : Block -> String

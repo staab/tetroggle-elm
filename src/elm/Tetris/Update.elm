@@ -27,7 +27,7 @@ update message model seed =
                     ( model, seed, Cmd.none )
 
                 WindowHeightDone height ->
-                    ( { model | windowHeight = (Debug.log "h" height) }, seed, Cmd.none )
+                    ( { model | windowHeight = height }, seed, Cmd.none )
 
                 Tick time ->
                     case model.shape of
