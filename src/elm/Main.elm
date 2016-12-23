@@ -15,7 +15,7 @@ import Models
             )
         )
 import Views exposing (view)
-import Ports exposing (addScore)
+import Ports exposing (addScore, setName)
 import Messages
     exposing
         ( Msg
@@ -44,7 +44,7 @@ init flags =
         seed =
             initialSeed flags.seed
     in
-        ( initialModel seed (lines flags.dictionary) flags.startTime
+        ( initialModel seed (lines flags.dictionary) flags.startTime flags.name
         , Cmd.map TetrisMsg getWindowHeight
         )
 
@@ -59,12 +59,12 @@ update msg model =
             ( { model | elapsed = time - model.startTime }, Cmd.none )
 
         SetName name ->
-            ( { model | name = name }, Cmd.none )
+            ( { model | name = name }, setName name )
 
         StartGame ->
             let
                 newModel =
-                    initialModel model.seed model.dictionary model.startTime
+                    initialModel model.seed model.dictionary model.startTime model.name
 
                 boggle =
                     newModel.boggle

@@ -11,6 +11,7 @@ window.firebase.initializeApp({
   messagingSenderId: "52280023929"
 });
 
+var name = window.localStorage && window.localStorage.getItem('name') || "Anonymous"
 var db = window.firebase.database();
 var scores = db.ref('scores');
 
@@ -44,6 +45,7 @@ var app = Elm.Main.fullscreen({
   seed: Math.floor(Math.random()*0xFFFFFFFF),
   dictionary: require('raw!./dictionary.txt'),
   startTime: (new Date()).getTime(),
+  name: name
 })
 
 app.ports.addScore.subscribe(function (score) {
@@ -52,4 +54,10 @@ app.ports.addScore.subscribe(function (score) {
     .then(function (scores) {
       app.ports.scores.send(scores);
     })
+})
+
+app.ports.setName.subscribe(function (name) {
+  if (window.localStorage) {
+    window.localStorage.setItem('name', name);
+  }
 })

@@ -23,6 +23,7 @@ type alias Flags =
     { seed : Int
     , dictionary : String
     , startTime : Float
+    , name : String
     }
 
 
@@ -39,8 +40,8 @@ type alias Model =
     }
 
 
-initialModel : Seed -> List String -> Float -> Model
-initialModel seed dictionary startTime =
+initialModel : Seed -> List String -> Float -> String -> Model
+initialModel seed dictionary startTime name =
     { tetris = Tetris.Models.initialModel
     , boggle = Boggle.Models.initialModel
     , seed = seed
@@ -48,6 +49,6 @@ initialModel seed dictionary startTime =
     , elapsed = 0.0
     , startTime = startTime
     , scoreBoardStatus = Prompt
-    , name = "Anonymous"
+    , name = name
     , scores = []
     }
