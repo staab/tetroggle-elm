@@ -40,6 +40,10 @@ button {
   &:hover {
     color: $c-text-hover;
   }
+
+  button > & {
+    color: $c-primary;
+  }
 }
 
 .wrapper {

@@ -1,11 +1,12 @@
 module Views exposing (view)
 
-import Html exposing (Html, div, text, button)
+import Html exposing (Html, div, i, h1, text, button)
 import Html.App
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Tetris.Views
 import Boggle.Views
+import Boggle.Messages
 import Models exposing (Model)
 import Messages exposing (Msg(BoggleMsg, TetrisMsg, StartGame))
 
@@ -89,4 +90,15 @@ endOverlay model =
 
 pausedOverlay : Model -> Html Msg
 pausedOverlay model =
-    div [] []
+    div [ class "overlay" ]
+        [ div [ style [ ( "text-align", "center" ) ] ]
+            [ h1 [] [ text "Paused" ]
+            , Html.App.map BoggleMsg
+                (button
+                    [ onClick Boggle.Messages.TogglePaused ]
+                    [ i [ class "fa fa-btn fa-paper-plane" ] []
+                    , text " Resume "
+                    ]
+                )
+            ]
+        ]
