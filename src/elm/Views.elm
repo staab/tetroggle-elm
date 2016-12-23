@@ -78,14 +78,28 @@ startOverlay model =
                     [ text "Tetris" ]
                 , div
                     [ class "overlay-start", style startStyle ]
-                    [ button [ onClick StartGame ] [ text "Start" ] ]
+                    [ button
+                        [ onClick StartGame ]
+                        [ i [ class "fa fa-btn fa-bolt" ] []
+                        , text " Get Started!"
+                        ]
+                    ]
                 ]
             ]
 
 
 endOverlay : Model -> Html Msg
 endOverlay model =
-    div [] []
+    div [ class "overlay" ]
+        [ div [ style [ ( "text-align", "center" ) ] ]
+            [ h1 [] [ text "Game Over" ]
+            , button
+                [ onClick StartGame ]
+                [ i [ class "fa fa-btn fa-rotate-left" ] []
+                , text " Start Over"
+                ]
+            ]
+        ]
 
 
 pausedOverlay : Model -> Html Msg
@@ -97,7 +111,7 @@ pausedOverlay model =
                 (button
                     [ onClick Boggle.Messages.TogglePaused ]
                     [ i [ class "fa fa-btn fa-paper-plane" ] []
-                    , text " Resume "
+                    , text " Resume"
                     ]
                 )
             ]

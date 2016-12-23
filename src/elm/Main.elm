@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Html.App as Html
+import String exposing (lines)
 import Random.Pcg exposing (initialSeed)
 import Models exposing (Flags, Model, initialModel)
 import Views exposing (view)
@@ -20,7 +21,7 @@ init flags =
         seed =
             initialSeed flags.seed
     in
-        ( initialModel seed flags.dictionary flags.startTime
+        ( initialModel seed (lines flags.dictionary) flags.startTime
         , Cmd.map TetrisMsg getWindowHeight
         )
 
@@ -36,11 +37,14 @@ update msg model =
 
         StartGame ->
             let
+                newModel =
+                    initialModel model.seed model.dictionary model.startTime
+
                 boggle =
-                    model.boggle
+                    newModel.boggle
 
                 tetris =
-                    model.tetris
+                    newModel.tetris
             in
                 ( { model
                     | boggle = { boggle | paused = False }

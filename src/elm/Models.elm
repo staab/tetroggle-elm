@@ -1,6 +1,5 @@
 module Models exposing (..)
 
-import String exposing (lines)
 import Random.Pcg exposing (Seed)
 import Tetris.Models
 import Boggle.Models
@@ -23,12 +22,12 @@ type alias Model =
     }
 
 
-initialModel : Seed -> String -> Float -> Model
+initialModel : Seed -> List String -> Float -> Model
 initialModel seed dictionary startTime =
     { tetris = Tetris.Models.initialModel
     , boggle = Boggle.Models.initialModel
     , seed = seed
-    , dictionary = lines dictionary
+    , dictionary = dictionary
     , elapsed = 0.0
     , startTime = startTime
     }
