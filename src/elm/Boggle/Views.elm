@@ -36,8 +36,10 @@ leftSidebar model =
                         , target "_blank"
                         , onClick TogglePaused
                         ]
-                        [ i [ class "fa fa-btn fa-2x fa-heart" ] []
-                        ]
+                        [ i [ class "fa fa-btn fa-2x fa-heart" ] [] ]
+                    , i
+                        [ onClick TogglePaused, class "fa fa-btn fa-2x fa-question-circle" ]
+                        []
                     ]
                 ]
             ]

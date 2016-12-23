@@ -1,6 +1,6 @@
 module Views exposing (view)
 
-import Html exposing (Html, div, i, h1, h2, text, table, tr, td, button, input)
+import Html exposing (Html, div, i, ul, li, h1, h2, text, table, tr, td, button, input)
 import Html.App
 import Html.Attributes exposing (disabled, class, style, type', value, placeholder)
 import Html.Events exposing (onClick, onInput)
@@ -28,6 +28,15 @@ import Messages
             , SetName
             )
         )
+
+
+helpText : List String
+helpText =
+    [ "It's kinda like tetris - use the arrow keys to position, rotate, and drop shapes into place."
+    , "It's kinda like boggle - type words to select blocks on the screen."
+    , "Hit escape to clear your selection; hit enter to submit it."
+    , "The longer the words, the more points you get!"
+    ]
 
 
 view : Model -> Html Msg
@@ -173,15 +182,18 @@ getEndOverlayDisplay model =
             button
                 [ onClick StartGame ]
                 [ i [ class "fa fa-btn fa-rotate-left" ] []
-                , text " Start Over"
+                , text " Play Again"
                 ]
     in
         case model.scoreBoardStatus of
             Submitted ->
-                [ h1 [] [ text "High Scores" ]
-                , table
-                    [ style [ ( "margin", "0 auto" ), ( "min-width", "200px" ) ] ]
-                    (List.map getScoreDisplay model.scores)
+                [ h1 [] [ text "Top 10 High Scores" ]
+                , div
+                    [ style [ ( "max-height", "300px" ), ( "overflow", "auto" ) ] ]
+                    [ table
+                        [ style [ ( "margin", "0 auto" ), ( "min-width", "200px" ) ] ]
+                        (List.map getScoreDisplay model.scores)
+                    ]
                 , div [ class "v-divider" ] []
                 , restartButton
                 ]
@@ -217,6 +229,11 @@ pausedOverlay model =
     div [ class "overlay" ]
         [ div [ style [ ( "text-align", "center" ) ] ]
             [ h1 [] [ text "Paused" ]
+            , div
+                [ style [ ( "text-align", "left" ), ( "max-width", "450px" ) ] ]
+                [ h2 [] [ text "How to play" ]
+                , ul [] (List.map (\help -> li [] [ text help ]) helpText)
+                ]
             , Html.App.map BoggleMsg
                 (button
                     [ onClick Boggle.Messages.TogglePaused ]

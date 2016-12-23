@@ -37,6 +37,18 @@ button {
   }
 }
 
+table {
+  border-collapse: collapse;
+
+  & > tr {
+    & > td {
+      border: 2px solid $c-text;
+      padding: 2px 5px;
+      background: $c-primary;
+    }
+  }
+}
+
 .fa-btn {
   cursor: pointer;
   color: $c-text;
@@ -84,7 +96,7 @@ button {
   opacity: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 
   .overlay-animation {
     position: relative;
@@ -92,6 +104,7 @@ button {
     font-size: 48px;
     font-family: 'Lobster', cursive;
     text-transform: uppercase;
+    align-self: center;
 
     // Animating elements
 

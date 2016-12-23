@@ -20,7 +20,7 @@ function addScore(score) {
 
 function getScores() {
   return scores
-    .limitToLast(50)
+    .limitToLast(10)
     .orderByChild('score')
     .once('value')
     .then(function (snapshot) {
