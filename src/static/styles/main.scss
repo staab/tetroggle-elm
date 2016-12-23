@@ -31,6 +31,7 @@ button {
   background: $c-text;
   color: $c-primary;
   cursor: pointer;
+  transition: .4s background;
 
   &:hover {
     background: $c-text-hover;
@@ -52,6 +53,7 @@ table {
 .fa-btn {
   cursor: pointer;
   color: $c-text;
+  transition: .4s color;
 
   &:hover {
     color: $c-text-hover;
