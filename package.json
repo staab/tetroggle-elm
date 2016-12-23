@@ -6,7 +6,7 @@
   "author": "Jon Staab",
   "scripts": {
     "start": "webpack-dev-server --hot --inline --port 9999 --host 0.0.0.0 --content-base src/",
-    "build": "rimraf dist && webpack",
+    "build": "rimraf dist && ./node_modules/webpack/bin/webpack.js",
     "watch": "webpack --watch",
     "cloc": "cloc --read-lang-def=elm_cloc.txt src"
   },

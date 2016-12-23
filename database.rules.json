@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "scores": {
+      ".read": true,
+      "$score": {
+        ".write": true,
+        ".indexOn": "score",
+        ".validate": "newData.hasChildren(['elapsed', 'score', 'name']) && newData.child('name').isString() && newData.child('score').val() / newData.child('elapsed').val() < 0.0055",
+      }
+    }
+  }
+}
