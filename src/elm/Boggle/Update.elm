@@ -84,6 +84,12 @@ getScore input =
             String.length input
     in
         case len of
+            3 ->
+                1
+
+            4 ->
+                1
+
             5 ->
                 2
 
@@ -93,11 +99,8 @@ getScore input =
             7 ->
                 5
 
-            8 ->
-                11
-
             _ ->
-                1
+                11
 
 
 inputCmd : String -> Cmd Msg
