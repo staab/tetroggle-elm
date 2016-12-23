@@ -1,4 +1,3 @@
-- question mark for help overlay
 - animate submit success/failure
 
 - Refactor existing code into a more sensible structure. 

@@ -4,6 +4,7 @@ import Char
 import String
 import Task
 import List exposing (member)
+import Tetris.Models exposing (Block)
 import Boggle.Models exposing (Model)
 import Boggle.Messages
     exposing
@@ -17,8 +18,8 @@ import Boggle.Messages
         )
 
 
-update : Msg -> Model -> List String -> ( Model, Cmd Msg )
-update msg model dictionary =
+update : Msg -> Model -> List String -> List Block -> ( Model, Cmd Msg )
+update msg model dictionary selection =
     case msg of
         KeyPress code ->
             if code >= 65 && code <= 90 then
@@ -34,9 +35,14 @@ update msg model dictionary =
             else if code == 13 then
                 -- enter
                 let
-                    success =
+                    len =
                         String.length model.input
+
+                    success =
+                        len
                             > 2
+                            && len
+                            == List.length selection
                             && member (String.toLower model.input) dictionary
 
                     cmd =

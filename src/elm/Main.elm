@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Html.App as Html
+import Matrix
 import String exposing (lines)
 import Random.Pcg exposing (initialSeed)
 import Models
@@ -34,6 +35,8 @@ import Tetris.Commands exposing (getWindowHeight)
 import Tetris.Update
 import Tetris.Select
 import Tetris.Messages
+import Tetris.BlockUtils exposing (isBlockType)
+import Tetris.Models exposing (BlockType(SelectedBlock))
 import Boggle.Update
 import Boggle.Messages
 
@@ -135,7 +138,14 @@ updateBoggle : Boggle.Messages.Msg -> Model -> ( Model, Cmd Msg )
 updateBoggle msg model =
     let
         ( updatedBoggle, cmd ) =
-            Boggle.Update.update msg model.boggle model.dictionary
+            Boggle.Update.update
+                msg
+                model.boggle
+                model.dictionary
+                (List.filter
+                    (isBlockType SelectedBlock)
+                    (Matrix.flatten model.tetris.blocks)
+                )
 
         newModel =
             { model | boggle = updatedBoggle }
