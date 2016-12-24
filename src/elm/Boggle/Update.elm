@@ -3,6 +3,7 @@ module Boggle.Update exposing (update)
 import Char
 import String
 import Task
+import Regex
 import List exposing (member)
 import Tetris.Models exposing (Block)
 import Boggle.Models exposing (Model)
@@ -35,15 +36,23 @@ update msg model dictionary selection =
             else if code == 13 then
                 -- enter
                 let
-                    len =
-                        String.length model.input
+                    word =
+                        String.toLower model.input
+
+                    longEnough =
+                        String.length word > 2
+
+                    matchesSelection =
+                        word
+                            |> Regex.replace Regex.All (Regex.regex "qu") (always "q")
+                            |> String.length
+                            |> (\len -> len == List.length selection)
+
+                    isValid =
+                        member word dictionary
 
                     success =
-                        len
-                            > 2
-                            && len
-                            == List.length selection
-                            && member (String.toLower model.input) dictionary
+                        longEnough && matchesSelection && isValid
 
                     cmd =
                         if success then
