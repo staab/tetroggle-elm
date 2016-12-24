@@ -28,10 +28,12 @@ import Messages
             , SetScores
             , StartGame
             , SetScoreBoardStatus
+            , WindowSizeFail
             , WindowSizeDone
             )
         )
 import Subscriptions exposing (subscriptions)
+import Commands exposing (getWindowSize)
 import Tetris.Commands exposing (getWindowHeight)
 import Tetris.Update
 import Tetris.Select
@@ -49,7 +51,10 @@ init flags =
             initialSeed flags.seed
     in
         ( initialModel seed (lines flags.dictionary) flags.startTime flags.name
-        , Cmd.map TetrisMsg getWindowHeight
+        , Cmd.batch
+            [ Cmd.map TetrisMsg getWindowHeight
+            , getWindowSize
+            ]
         )
 
 
@@ -61,6 +66,9 @@ update msg model =
 
         Tick time ->
             ( { model | elapsed = time - model.startTime }, Cmd.none )
+
+        WindowSizeFail ->
+            ( model, Cmd.none )
 
         WindowSizeDone windowSize ->
             ( { model | windowSize = windowSize }, Cmd.none )

@@ -1,3 +1,4 @@
 --ignore-dir=elm-stuff
 --ignore-dir=node_modules
+--ignore-dir=dist
 --ignore-file=match:npm-debug.log

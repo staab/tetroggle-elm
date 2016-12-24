@@ -10,6 +10,7 @@ type Msg
     = NoOp
     | Tick Time
     | StartGame
+    | WindowSizeFail
     | WindowSizeDone { height : Int, width : Int }
     | SetName String
     | SetScores (List Score)
