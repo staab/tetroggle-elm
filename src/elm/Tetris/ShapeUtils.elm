@@ -1,156 +1,244 @@
-module Tetris.ShapeUtils exposing (
-  addShape,
-  moveShape,
-  rotateShape,
-  stompShape,
-  modifyModelShape,
-  isAboveGame,
-  blockInShape)
+module Tetris.ShapeUtils
+    exposing
+        ( addShape
+        , moveShape
+        , rotateShape
+        , stompShape
+        , modifyModelShape
+        , isAboveGame
+        , blockInShape
+        , handleLeftArrow
+        , handleRightArrow
+        )
 
 import Random.Pcg exposing (Seed)
 import Matrix exposing (set, row, col, loc, Location, Matrix)
 import Utils exposing (fromJust)
 import Tetris.Models exposing (Model, Shape, Block, newShape, emptyBlock)
 import Tetris.Utils exposing (randomShapeType, randomShapeBlocks)
-import Tetris.BlockUtils exposing (
-  moveBlock,
-  blockCollision,
-  isSameBlock,
-  getCorner,
-  getBBox,
-  rotateBlock,
-  adjustBlocks,
-  inBlocks,
-  isInGame)
+import Tetris.BlockUtils
+    exposing
+        ( moveBlock
+        , blockCollision
+        , isSameBlock
+        , getCorner
+        , getBBox
+        , rotateBlock
+        , adjustBlocks
+        , inBlocks
+        , isInGame
+        )
+
 
 -- Model Updaters
 
-addShape : Model -> Seed -> (Model, Seed)
-addShape model seed =
-  let
-    ( shapeType, seed1 ) = randomShapeType seed
-    ( blocks, seed2 ) = randomShapeBlocks shapeType seed1
-    shape = newShape shapeType blocks
-    newModel =
-      { model |
-        shape = shape,
-        blocks = applyShape model.blocks ( fromJust shape )
-      }
-  in (newModel, seed2)
 
-moveShape : Model -> Int -> Int -> (Shape, Bool)
+handleLeftArrow : Model -> Model
+handleLeftArrow model =
+    let
+        ( shape, collision ) =
+            moveShape model 0 -1
+
+        newShape =
+            if collision then
+                model.shape
+            else
+                Just shape
+    in
+        modifyModelShape model newShape
+
+
+handleRightArrow : Model -> Model
+handleRightArrow model =
+    let
+        ( shape, collision ) =
+            moveShape model 0 1
+
+        newShape =
+            if collision then
+                model.shape
+            else
+                Just shape
+    in
+        modifyModelShape model newShape
+
+
+addShape : Model -> Seed -> ( Model, Seed )
+addShape model seed =
+    let
+        ( shapeType, seed1 ) =
+            randomShapeType seed
+
+        ( blocks, seed2 ) =
+            randomShapeBlocks shapeType seed1
+
+        shape =
+            newShape shapeType blocks
+
+        newModel =
+            { model
+                | shape = shape
+                , blocks = applyShape model.blocks (fromJust shape)
+            }
+    in
+        ( newModel, seed2 )
+
+
+moveShape : Model -> Int -> Int -> ( Shape, Bool )
 moveShape model rowDelta colDelta =
-  let
-    oldShape = fromJust model.shape
-    newBlocks = List.map ( moveBlock rowDelta colDelta ) oldShape.blocks
-    collision = shapeCollision oldShape.blocks newBlocks model.blocks
-    newShape = { oldShape | blocks = newBlocks }
-  in
-    (newShape, collision)
+    let
+        oldShape =
+            fromJust model.shape
+
+        newBlocks =
+            List.map (moveBlock rowDelta colDelta) oldShape.blocks
+
+        collision =
+            shapeCollision oldShape.blocks newBlocks model.blocks
+
+        newShape =
+            { oldShape | blocks = newBlocks }
+    in
+        ( newShape, collision )
+
 
 modifyModelShape : Model -> Maybe Shape -> Model
 modifyModelShape model shape =
-  { model |
-    shape = shape,
-    blocks =
-      replaceShape model.blocks ( fromJust model.shape ) shape
-  }
+    { model
+        | shape = shape
+        , blocks =
+            replaceShape model.blocks (fromJust model.shape) shape
+    }
+
+
 
 -- Algorithm from http://stackoverflow.com/a/2259502/1467342
 -- translate shape to origin, rotate, translate back
+
+
 rotateShape : Model -> Model
 rotateShape model =
-  let
-    -- Alias for readability
-    oldShape = fromJust model.shape
+    let
+        -- Alias for readability
+        oldShape =
+            fromJust model.shape
 
-    -- Get bounding box
-    oldBBox = getBBox oldShape.blocks
+        -- Get bounding box
+        oldBBox =
+            getBBox oldShape.blocks
 
-    -- Get center
-    cx = ((oldBBox.maxX - oldBBox.minX) // 2) + oldBBox.minX
-    cy = ((oldBBox.maxY - oldBBox.minY) // 2) + oldBBox.minY
+        -- Get center
+        cx =
+            ((oldBBox.maxX - oldBBox.minX) // 2) + oldBBox.minX
 
-    -- Rotate the blocks
-    newBlocks =
-      adjustBlocks
-        oldShape.blocks
-        ( List.map ( rotateBlock cx cy ) oldShape.blocks )
+        cy =
+            ((oldBBox.maxY - oldBBox.minY) // 2) + oldBBox.minY
 
-    -- Adjust if necessary
-    newShape = Just { oldShape | blocks = newBlocks }
-  in
-    { model |
-      shape = newShape,
-      blocks = replaceShape model.blocks oldShape newShape
-    }
+        -- Rotate the blocks
+        newBlocks =
+            adjustBlocks
+                oldShape.blocks
+                (List.map (rotateBlock cx cy) oldShape.blocks)
+
+        -- Adjust if necessary
+        newShape =
+            Just { oldShape | blocks = newBlocks }
+    in
+        { model
+            | shape = newShape
+            , blocks = replaceShape model.blocks oldShape newShape
+        }
+
 
 stompShape : Model -> Model
 stompShape model =
-  let
-    (newShape, collision) = moveShape model 1 0
-  in
-    case collision of
-      True ->
-        model
-      False ->
-        stompShape ( modifyModelShape model ( Just newShape ) )
+    let
+        ( newShape, collision ) =
+            moveShape model 1 0
+    in
+        case collision of
+            True ->
+                model
+
+            False ->
+                stompShape (modifyModelShape model (Just newShape))
+
+
 
 -- Helpers
 
-getShapeDimensions : Shape -> (Int, Int)
+
+getShapeDimensions : Shape -> ( Int, Int )
 getShapeDimensions shape =
-  ( ( getCorner col List.maximum shape.blocks )
-    - ( getCorner col List.minimum shape.blocks )
-  , ( getCorner row List.maximum shape.blocks )
-    - ( getCorner row List.minimum shape.blocks )
-  )
+    ( (getCorner col List.maximum shape.blocks)
+        - (getCorner col List.minimum shape.blocks)
+    , (getCorner row List.maximum shape.blocks)
+        - (getCorner row List.minimum shape.blocks)
+    )
+
 
 unapplyShape : Matrix Block -> Shape -> Matrix Block
 unapplyShape blocks shape =
-  List.foldr
-    (\block blocks -> set block.location ( emptyBlock block.location ) blocks )
-    blocks shape.blocks
+    List.foldr
+        (\block blocks -> set block.location (emptyBlock block.location) blocks)
+        blocks
+        shape.blocks
+
 
 applyShape : Matrix Block -> Shape -> Matrix Block
 applyShape blocks shape =
-  List.foldr
-    (\block blocks -> set block.location block blocks)
-    blocks shape.blocks
+    List.foldr
+        (\block blocks -> set block.location block blocks)
+        blocks
+        shape.blocks
+
 
 replaceShape : Matrix Block -> Shape -> Maybe Shape -> Matrix Block
 replaceShape blocks old new =
-  case new of
-    Nothing -> unapplyShape blocks old
-    Just shape -> applyShape ( unapplyShape blocks old ) shape
+    case new of
+        Nothing ->
+            unapplyShape blocks old
+
+        Just shape ->
+            applyShape (unapplyShape blocks old) shape
+
 
 shapeCollision : List Block -> List Block -> Matrix Block -> Bool
 shapeCollision oldBlocks newBlocks blocks =
-  let
-    -- Quick function for checking. Only check blocks that aren't redundant,
-    -- And which are in the actual game (not buffered above)
-    shouldCheck : Block -> Bool
-    shouldCheck block =
-      not ( List.any ( isSameBlock block ) oldBlocks )
-        && row block.location >= 0
-    checkBlocks = List.filter shouldCheck newBlocks
-  in
-    -- Check the bottom of the game
-    List.any ( .location >> isInGame >> not ) checkBlocks
-    -- Check any blocks below
-      || blockCollision checkBlocks blocks
+    let
+        -- Quick function for checking. Only check blocks that aren't redundant,
+        -- And which are in the actual game (not buffered above)
+        shouldCheck : Block -> Bool
+        shouldCheck block =
+            not (List.any (isSameBlock block) oldBlocks)
+                && row block.location
+                >= 0
+
+        checkBlocks =
+            List.filter shouldCheck newBlocks
+    in
+        -- Check the bottom of the game
+        List.any (.location >> isInGame >> not) checkBlocks
+            -- Check any blocks below
+            ||
+                blockCollision checkBlocks blocks
+
 
 isAboveGame : Maybe Shape -> Bool
 isAboveGame maybeShape =
-  case maybeShape of
-    Nothing -> False
-    Just shape -> List.any (\block -> row block.location < 0) shape.blocks
+    case maybeShape of
+        Nothing ->
+            False
+
+        Just shape ->
+            List.any (\block -> row block.location < 0) shape.blocks
+
 
 blockInShape : Maybe Shape -> Block -> Bool
 blockInShape maybeShape block =
-  case maybeShape of
-    Just shape ->
-      inBlocks shape.blocks block
+    case maybeShape of
+        Just shape ->
+            inBlocks shape.blocks block
 
-    Nothing ->
-      False
+        Nothing ->
+            False

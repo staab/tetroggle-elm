@@ -12,6 +12,8 @@ import Tetris.ShapeUtils
         , modifyModelShape
         , isAboveGame
         , blockInShape
+        , handleLeftArrow
+        , handleRightArrow
         )
 
 
@@ -68,39 +70,13 @@ update message model seed =
                         Just _ ->
                             case code of
                                 37 ->
-                                    let
-                                        ( shape, collision ) =
-                                            moveShape model 0 -1
-
-                                        newShape =
-                                            if collision then
-                                                model.shape
-                                            else
-                                                Just shape
-
-                                        newModel =
-                                            modifyModelShape model newShape
-                                    in
-                                        ( newModel, seed, Cmd.none )
+                                    ( handleLeftArrow model, seed, Cmd.none )
 
                                 38 ->
                                     ( rotateShape model, seed, Cmd.none )
 
                                 39 ->
-                                    let
-                                        ( shape, collision ) =
-                                            moveShape model 0 1
-
-                                        newShape =
-                                            if collision then
-                                                model.shape
-                                            else
-                                                Just shape
-
-                                        newModel =
-                                            modifyModelShape model newShape
-                                    in
-                                        ( newModel, seed, Cmd.none )
+                                    ( handleRightArrow model, seed, Cmd.none )
 
                                 40 ->
                                     ( stompShape model, seed, Cmd.none )

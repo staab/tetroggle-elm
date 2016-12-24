@@ -1,9 +1,10 @@
 module Subscriptions exposing (subscriptions)
 
 import Time exposing (every, millisecond)
+import Window
 import Models exposing (Model)
 import Ports exposing (scores)
-import Messages exposing (Msg(Tick, TetrisMsg, BoggleMsg, SetScores))
+import Messages exposing (Msg(Tick, TetrisMsg, BoggleMsg, SetScores, WindowSizeDone))
 import Tetris.Subscriptions
 import Boggle.Subscriptions
 
@@ -15,4 +16,5 @@ subscriptions model =
         , Tetris.Subscriptions.subscriptions model.tetris |> Sub.map TetrisMsg
         , Boggle.Subscriptions.subscriptions model.boggle |> Sub.map BoggleMsg
         , scores SetScores
+        , Window.resizes WindowSizeDone
         ]

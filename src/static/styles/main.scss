@@ -154,6 +154,21 @@ table {
   }
 }
 
+.touch-controls {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: z("game");
+
+  .fa-btn {
+    color: $c-bg;
+
+    &:hover {
+      color: $c-bg-hover;
+    }
+  }
+}
+
 .inner-wrapper {
   z-index: z("game");
   position: absolute;
@@ -164,6 +179,27 @@ table {
   font-family: 'Cabin Sketch';
   background-color: $c-bg;
   overflow-y: hidden;
+
+  &.inner-wrapper-narrow {
+    background-color: $c-text;
+
+    .right-sidebar {
+      display: none;
+    }
+
+    .left-sidebar {
+      background-color: transparent;
+      color: $c-bg;
+
+      .fa-btn {
+        color: $c-bg;
+
+        &:hover {
+          color: $c-bg-hover;
+        }
+      }
+    }
+  }
 
   .left-sidebar,
   .right-sidebar {

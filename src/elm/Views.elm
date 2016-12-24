@@ -4,7 +4,9 @@ import Html exposing (Html, div, i, ul, li, h1, h2, text, table, tr, td, button,
 import Html.App
 import Html.Attributes exposing (disabled, class, style, type', value, placeholder)
 import Html.Events exposing (onClick, onInput)
+import Utils exposing (divide)
 import Tetris.Views
+import Tetris.Messages
 import Boggle.Views
 import Boggle.Messages
 import Models
@@ -41,14 +43,83 @@ helpText =
 
 view : Model -> Html Msg
 view model =
-    div [ class "wrapper" ]
-        [ overlay model
-        , div [ class "inner-wrapper" ]
-            [ Html.App.map BoggleMsg (Boggle.Views.leftSidebar model.boggle)
-            , Html.App.map TetrisMsg (Tetris.Views.view model.tetris)
-            , Html.App.map BoggleMsg (Boggle.Views.rightSidebar model.boggle)
+    let
+        isWide =
+            divide model.windowSize.width model.windowSize.height > 1.65
+
+        innerWrapperClass =
+            if isWide then
+                "inner-wrapper-wide"
+            else
+                "inner-wrapper-narrow"
+
+        touchControls =
+            if isWide then
+                div [] []
+            else
+                div
+                    [ class "touch-controls btn-group" ]
+                    [ div
+                        [ class "btn-group" ]
+                        [ Html.App.map BoggleMsg
+                            (i
+                                [ class "fa fa-2x fa-btn fa-times"
+                                , onClick (Boggle.Messages.KeyPress 27)
+                                ]
+                                []
+                            )
+                        ]
+                    , div
+                        [ class "btn-group" ]
+                        [ Html.App.map BoggleMsg
+                            (i
+                                [ class "fa fa-2x fa-btn fa-check"
+                                , onClick (Boggle.Messages.KeyPress 13)
+                                ]
+                                []
+                            )
+                        ]
+                    , div
+                        [ class "btn-group" ]
+                        [ Html.App.map TetrisMsg
+                            (i
+                                [ class "fa fa-2x fa-btn fa-rotate-left"
+                                , onClick (Tetris.Messages.KeyPress 38)
+                                ]
+                                []
+                            )
+                        ]
+                    , div
+                        [ class "btn-group" ]
+                        [ Html.App.map TetrisMsg
+                            (i
+                                [ class "fa fa-2x fa-btn fa-arrow-circle-left"
+                                , onClick (Tetris.Messages.KeyPress 37)
+                                ]
+                                []
+                            )
+                        ]
+                    , div
+                        [ class "btn-group" ]
+                        [ Html.App.map TetrisMsg
+                            (i
+                                [ class "fa fa-2x fa-btn fa-arrow-circle-right"
+                                , onClick (Tetris.Messages.KeyPress 39)
+                                ]
+                                []
+                            )
+                        ]
+                    ]
+    in
+        div [ class "wrapper" ]
+            [ overlay model
+            , div [ class ("inner-wrapper " ++ innerWrapperClass) ]
+                [ Html.App.map BoggleMsg (Boggle.Views.leftSidebar model.boggle)
+                , Html.App.map BoggleMsg (Tetris.Views.view model.boggle.input model.tetris)
+                , Html.App.map BoggleMsg (Boggle.Views.rightSidebar model.boggle)
+                ]
+            , touchControls
             ]
-        ]
 
 
 overlay : Model -> Html Msg
@@ -230,7 +301,7 @@ pausedOverlay model =
         [ div [ style [ ( "text-align", "center" ) ] ]
             [ h1 [] [ text "Paused" ]
             , div
-                [ style [ ( "text-align", "left" ), ( "max-width", "450px" ) ] ]
+                [ style [ ( "text-align", "left" ), ( "max-width", "300px" ) ] ]
                 [ h2 [] [ text "How to play" ]
                 , ul [] (List.map (\help -> li [] [ text help ]) helpText)
                 ]

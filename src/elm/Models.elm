@@ -37,6 +37,7 @@ type alias Model =
     , scoreBoardStatus : ScoreBoardStatus
     , name : String
     , scores : List Score
+    , windowSize : { height : Int, width : Int }
     }
 
 
@@ -51,4 +52,5 @@ initialModel seed dictionary startTime name =
     , scoreBoardStatus = Prompt
     , name = name
     , scores = []
+    , windowSize = { height = 0, width = 0 }
     }

@@ -28,6 +28,7 @@ import Messages
             , SetScores
             , StartGame
             , SetScoreBoardStatus
+            , WindowSizeDone
             )
         )
 import Subscriptions exposing (subscriptions)
@@ -60,6 +61,9 @@ update msg model =
 
         Tick time ->
             ( { model | elapsed = time - model.startTime }, Cmd.none )
+
+        WindowSizeDone windowSize ->
+            ( { model | windowSize = windowSize }, Cmd.none )
 
         SetName name ->
             ( { model | name = name }, setName name )
