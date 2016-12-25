@@ -45,20 +45,14 @@ update message model seed =
                                 ( shape, collision ) =
                                     moveShape model 1 0
 
-                                newShape =
-                                    if collision then
-                                        Nothing
-                                    else
-                                        Just shape
-
                                 newModel =
                                     -- Check against old shape pre-move
                                     if collision && isAboveGame model.shape then
                                         { model | gameOver = True }
                                     else if collision then
-                                        { model | shape = newShape }
+                                        { model | shape = Nothing }
                                     else
-                                        modifyModelShape model newShape
+                                        modifyModelShape model (Just shape)
                             in
                                 ( newModel, seed, Cmd.none )
 

@@ -41,7 +41,7 @@ randomShapeType seed =
 locationToFullBlock : Location -> Block
 locationToFullBlock location =
     { blockType = FullBlock
-    , location = loc (row location) (halfWidth + (col location))
+    , location = loc ((row location) + 1) (halfWidth + (col location))
     , letter = Nothing
     }
 

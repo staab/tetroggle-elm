@@ -50,7 +50,7 @@ type alias Model =
 
 gameSize : { width : Int, height : Int }
 gameSize =
-    { width = 15, height = 20 }
+    { width = 10, height = 15 }
 
 
 initialModel : Model
