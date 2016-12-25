@@ -45,7 +45,7 @@ view : Model -> Html Msg
 view model =
     let
         isWide =
-            divide model.windowSize.width model.windowSize.height > 1.65
+            divide model.windowSize.width model.windowSize.height > 1.1
 
         innerWrapperClass =
             if isWide then
