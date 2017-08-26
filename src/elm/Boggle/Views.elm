@@ -19,28 +19,9 @@ leftSidebar model =
                 [ text (model.score |> toString |> padLeft 3 '0') ]
             , div
                 [ style [ ( "display", "inline-block" ) ] ]
-                [ div
-                    [ style
-                        [ ( "display", "flex" )
-                        , ( "flex-direction", "column" )
-                        , ( "align-items", "center" )
-                        , ( "justify-content", "space-around" )
-                        , ( "height", "100px" )
-                        ]
-                    ]
-                    [ i
-                        [ onClick TogglePaused, class "fa fa-btn fa-2x fa-pause" ]
-                        []
-                    , a
-                        [ href "https://cash.me/$jstaab"
-                        , target "_blank"
-                        , onClick TogglePaused
-                        ]
-                        [ i [ class "fa fa-btn fa-2x fa-heart" ] [] ]
-                    , i
-                        [ onClick TogglePaused, class "fa fa-btn fa-2x fa-question-circle" ]
-                        []
-                    ]
+                [ i
+                    [ onClick TogglePaused, class "fa fa-btn fa-2x fa-pause" ]
+                    []
                 ]
             ]
         ]
